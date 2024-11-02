@@ -80,3 +80,53 @@ CREATE TABLE CustomList (
     FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
     PRIMARY KEY (userID, bookID) 
 );
+
+CREATE TABLE Books (
+    bookID SERIAL PRIMARY KEY,         
+    title TEXT NOT NULL,               
+    cover TEXT,                     
+    description TEXT,                  
+    format TEXT,                       
+    page_numbers INTEGER,              
+    pub_date DATE,                     
+    goodreads_rating REAL            
+);
+
+
+CREATE TABLE Comments(
+    commentID SERIAL PRIMARY KEY,
+    userID INT,
+    bookID INT,
+    FOREIGN KEY (userID)
+        REFERENCES Users (userID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (bookID)
+        REFERENCES Books (bookID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    content TEXT NOT NULL,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    spoiler BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE Genres(
+    genreID SERIAL PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE BookAuthors (
+    bookID INT, 
+    authorID INT,   
+    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
+    FOREIGN KEY (authorID) REFERENCES Authors(authorID) ON DELETE CASCADE,
+    PRIMARY KEY (bookID, authorID)
+);
+
+CREATE TABLE BookGenres (
+    bookID INT, 
+    genreID INT,   
+    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
+    FOREIGN KEY (genreID) REFERENCES Genres(genreID) ON DELETE CASCADE,
+    PRIMARY KEY (bookID, genreID)
+);
