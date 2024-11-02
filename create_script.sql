@@ -26,3 +26,57 @@ CREATE TABLE Progress(
     FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
     PRIMARY KEY (userID, bookID)
 );
+
+CREATE TABLE Reviews(
+    reviewID SERIAL PRIMARY KEY,
+    userID INT,
+    bookID INT,
+    FOREIGN KEY (userID)
+        REFERENCES Users (userID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (bookID)
+        REFERENCES Books (bookID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    review TEXT ,
+    rating SMALLINT NOT NULL,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE WantToRead (
+    userID INT,
+    bookID INT, 
+    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
+    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
+    PRIMARY KEY (userID, bookID)
+);
+
+CREATE TABLE CurrentlyReading (
+    userID INT,
+    bookID INT, 
+    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
+    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
+    PRIMARY KEY (userID, bookID)
+);
+
+CREATE TABLE AlreadyRead (
+    userID INT,
+    bookID INT, 
+    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
+    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
+    PRIMARY KEY (userID, bookID) 
+);
+
+CREATE TABLE CustomList (
+    userID INT,
+    bookID INT, 
+    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    list_name TEXT NOT NULL,
+    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
+    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
+    PRIMARY KEY (userID, bookID) 
+);
