@@ -130,3 +130,24 @@ CREATE TABLE BookGenres (
     FOREIGN KEY (genreID) REFERENCES Genres(genreID) ON DELETE CASCADE,
     PRIMARY KEY (bookID, genreID)
 );
+
+CREATE TABLE Authors (
+    authorID SERIAL PRIMARY KEY,      
+    name VARCHAR(100) NOT NULL,        
+    wiki_link TEXT,                      
+    image TEXT,                    
+    summary TEXT,
+    description TEXT                 
+);
+
+CREATE TABLE userBooks (
+    bookID SERIAL PRIMARY KEY, 
+    userID INT,       
+    title TEXT NOT NULL,               
+    cover TEXT,                     
+    description TEXT,                  
+    format TEXT,                       
+    page_numbers INTEGER NOT NULL,              
+    pub_date DATE,     
+    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,                          
+);
