@@ -20,7 +20,14 @@ class User:
 
 @dataclass
 class Book:
-    pass
+    bookid: int
+    title: str
+    cover: str
+    description: str
+    format: str
+    page_numbers: int
+    pub_date: datetime
+    goodreads_rating: float
 
 
 @dataclass
