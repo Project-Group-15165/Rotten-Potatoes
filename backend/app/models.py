@@ -32,7 +32,12 @@ class Book:
 
 @dataclass
 class Author:
-    pass
+    authorid: int      
+    name: str    
+    wiki_link: str                  
+    image: str                  
+    summary: str
+    description: str
 
 
 @dataclass
@@ -78,3 +83,14 @@ class AlreadyRead:
 @dataclass
 class CurrentlyReading:
     pass
+
+@dataclass
+class userBook:
+    userid: int
+    bookid: int
+    title: str               
+    cover: str                   
+    description: str                
+    format: str                     
+    page_numbers: int             
+    pub_date: datetime  
