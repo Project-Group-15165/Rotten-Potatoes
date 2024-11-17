@@ -1,3 +1,6 @@
 .env
 backend/.env
 backend/app/.env
+
+# Ignore all __pycache__ directories
+__pycache__/
