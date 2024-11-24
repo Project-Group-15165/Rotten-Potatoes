@@ -9,8 +9,8 @@ class BookServices:
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """INSERT INTO books(bookID, title, cover, description, format, page_numbers, pub_date, goodreads_rating)
-                           VALUES (%s, %s, %s, %s, %s, %s, %s, %s )"""
+                query = """INSERT INTO books( title, cover, description, format, page_numbers, pub_date, goodreads_rating)
+                           VALUES ( %s, %s, %s, %s, %s, %s, %s )"""
                            
                 try:      
                     cur.execute(query, (book.bookid, book.title, book.cover, book.description, book.format, book.page_numbers, book.pub_date, book.goodreads_rating))
@@ -34,10 +34,12 @@ class BookServices:
                 """   
                 try:      
                     cur.execute(query, (book_title))
-                    conn.commit() 
+                    book = cur.fetchone() #only one book
+                    if book:
+                        return book
+                    return None
                 except Exception as e:
-                    print(f"Error: {e}")
-                    conn.rollback()
+                    raise e 
                 finally:
                     cur.close()
                     conn.close()
@@ -79,4 +81,45 @@ class BookServices:
                     cur.close()
                     conn.close()
                     
+    @staticmethod
+    def get_book_by_id(bookID: int):
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                query = """SELECT * FROM books 
+                WHERE bookID = %s
+                """   
+                try:      
+                    cur.execute(query, (bookID))
+                    book_data = cur.fetchone() #only one book
+                    if book_data:
+                        book = Book(**book_data)
+                        return book
+                    return None
+                except Exception as e:
+                    raise e 
+                finally:
+                    cur.close()
+                    conn.close()
+                    
+    @staticmethod
+    def get_all_books():                            # this may be changed later to add limit and may be add offset when we change pages 1-> 2-> 3..
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                query = """SELECT * FROM books """   
+                try:      
+                    cur.execute(query)
+                    books = cur.fetchall()
+                    if books:
+                        Books = [Book(**book) for book in books]
+                        return Books
+                    return None
+                except Exception as e:
+                    raise e 
+                finally:
+                    cur.close()
+                    conn.close()
+        
+       
     
