@@ -20,7 +20,6 @@ class User:
 
 @dataclass
 class Book:
-    bookid: int
     title: str
     cover: str
     description: str
@@ -28,6 +27,7 @@ class Book:
     page_numbers: int
     pub_date: datetime
     goodreads_rating: float
+    bookid: int = 0
 
 
 @dataclass
@@ -47,7 +47,12 @@ class Genre:
 
 @dataclass
 class Comment:
-    pass
+    userid: int
+    bookid: int
+    content: str
+    spoiler: bool
+    commentid: int = 0
+    creation_date: datetime = field(default_factory=datetime.now)
 
 
 @dataclass
