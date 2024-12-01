@@ -13,7 +13,7 @@ class CommentService:
                 try:
                     cur.execute(
                         "SELECT * FROM Comments WHERE bookid =%s;",
-                        (bookid)
+                        (bookid,)
                     )
                     all_comments = cur.fetchall()
                     if all_comments:
@@ -91,8 +91,8 @@ class CommentService:
                     )
                     conn.commit()
                 except Exception as e:
-                    print(f"Error: {e}")
                     conn.rollback()
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
@@ -102,26 +102,25 @@ class CommentService:
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                # No need to add the comment id since for each user, one comment
                 query = """UPDATE comments SET 
-                    content=%s, creation_date=%s, spoiler=%s
-                    WHERE bookID=%s AND userid=%s AND commentid =%s
+                    content=%s, creation_date= now(), spoiler=%s
+                    WHERE bookID=%s AND userid=%s 
                 """ 
                 try:
                     cur.execute(
                         query,
                         (
                             comment.content,
-                            comment.creation_date,
                             comment.spoiler,
-                            comment.userid,
                             comment.bookid,
-                            comment.commentid,
+                            comment.userid
                         ),
                     )
                     conn.commit()
                 except Exception as e:
-                    print(f"Error: {e}")
                     conn.rollback()
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
@@ -133,11 +132,11 @@ class CommentService:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = "DELETE FROM comments WHERE commentid=%s"
                 try:
-                    cur.elxecute(query,(commentid))
+                    cur.execute(query,(commentid,))
                     conn.commit()
                 except Exception as e:
-                    print(f"Error: {e}")
                     conn.rollback()
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
