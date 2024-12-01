@@ -13,7 +13,7 @@ def get_author(authorid):
         return jsonify({"message": str(e)}), 500
 
     if author:
-        return jsonify(author.to_dict()), 200
+        return jsonify(author), 200
     else:
         return jsonify({"message": "Author not found"}), 404
 

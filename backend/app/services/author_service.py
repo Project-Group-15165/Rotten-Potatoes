@@ -11,7 +11,7 @@ class AuthorService:
         cursor = conn.cursor(cursor_factory = RealDictCursor)
         try:
             cursor.execute(
-                "SELECT * FROM author WHERE authorid = %s",
+                "SELECT * FROM authors WHERE authorid = %s",
                 (authorid),
             )
 
@@ -31,7 +31,7 @@ class AuthorService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)   
         prompt = """
-        INSERT INTO author (authorid, name, wiki_link, image, bio)
+        INSERT INTO authors (authorid, name, wiki_link, image, bio)
         VALUES (%s,%s,%s,%s,%s);
         """
 
@@ -57,7 +57,7 @@ class AuthorService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-        prompt = """UPDATE author SET name = %s, wiki_link = %s, image = %s, bio = %s;
+        prompt = """UPDATE authors SET name = %s, wiki_link = %s, image = %s, bio = %s;
         """
         try:
             cursor.execute(
@@ -84,7 +84,7 @@ class AuthorService:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "DELETE FROM author WHERE authorid = %s", (authorid)
+                "DELETE FROM authors WHERE authorid = %s", (authorid)
             )
         except Exception as e:
             print(f"Error: {e}")
