@@ -10,7 +10,7 @@ class UserBookService:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute(
-                "SELECT * FROM userBooks WHERE userID = %s AND bookID = %s;",
+                "SELECT * FROM userBooks WHERE userid = %s AND bookid = %s;",
                 (userid, bookid)
             )
             user_book_data = cursor.fetchone()
@@ -29,14 +29,14 @@ class UserBookService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)   
         prompt = """
-        INSERT INTO userBooks (userID, title, cover, description, format, page_numbers, pub_date)
+        INSERT INTO userBooks (userid, title, cover, description, format, page_numbers, pub_date)
         VALUES (%s, %s, %s, %s, %s, %s, %s);
         """
         try:
             cursor.execute(
                 prompt,
                 (
-                    userBook.userID,
+                    userBook.userid,
                     userBook.title,
                     userBook.cover,
                     userBook.description,
@@ -79,7 +79,7 @@ class UserBookService:
                     userBook.format,
                     userBook.page_numbers,
                     userBook.pub_date,
-                    userBook.bookID,  # Ensure the correct book is updated
+                    userBook.bookID,  
                 )
             )
             conn.commit()
