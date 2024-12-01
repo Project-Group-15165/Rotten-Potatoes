@@ -38,11 +38,13 @@ class Author:
     image: str                  
     summary: str
     description: str
+    authorid: int = 0
 
 
 @dataclass
 class Genre:
-    pass
+    genreid: int
+    name: str
 
 
 @dataclass
@@ -99,3 +101,4 @@ class userBook:
     format: str                     
     page_numbers: int             
     pub_date: datetime  
+    bookid: int = 0
