@@ -18,44 +18,51 @@ def get_author(authorid):
         return jsonify({"message": "Author not found"}), 404
 
 
-@bp.route("/<authorid>/add", methods=["POST"])
+@bp.route("/add", methods=["POST"])   
 @jwt_required
-def add_author():
+def add_author(identity):
     data = request.get_json()
     author = Author(
-        authorID=data.get("authorID"),
         name=data.get("name"),
         wiki_link=data.get("wiki_link"),
         image=data.get("image"),
-        bio=data.get("bio")
+        description=data.get("description"),
+        summary=data.get("summary"),
     )
     try:
         AuthorService.add_author(author=author)
     except Exception as e:
-        return jsonify({"message": "Error adding author"}), 500
+        return jsonify({"message": "error can't add author " + str(e)}), 500
 
     return jsonify({"message": "Author added successfully"}), 201
 
 
 @bp.route("/<authorid>/update", methods=["PUT"])
 @jwt_required
-def update_author(authorid):
+def update_author(identity, authorid):
     data = request.get_json()
     author = AuthorService.get_author(authorid=authorid)
     if not author:
         return jsonify({"message": "Author not found"}), 404
 
-    author.name = data.get("name", author.name)
-    author.wiki_link = data.get("wiki_link", author.wiki_link)
-    author.image = data.get("image", author.image)
-    author.bio = data.get("bio", author.bio)
+    if data.get("name"):
+        author.name = data.get("name")
+    if data.get("wiki_link"):
+        author.wiki_link = data.get("wiki_link")
+    if data.get("image"):
+        author.image = data.get("image")
+    if data.get("description"):
+        author.description = data.get("description")
+    if data.get("summary"):
+        author.summary = data.get("summary")
 
     try:
         AuthorService.update_author(author=author)
     except Exception as e:
-        return jsonify({"message": "error cannot update author"}), 500
+        return jsonify({"message": "error can't update author " + str(e)}), 500
 
-    return jsonify({"message": "Author updated successfully"}), 200    
+    return jsonify({"message": "Author updated successfully"}), 200
+
 
 @bp.route("/<authorid>/delete", methods=["DELETE"])
 @jwt_required
