@@ -47,7 +47,7 @@ def register():
         middle_name=data.get("middle_name"),
         last_name=data.get("last_name"),
         email=data.get("email"),
-        birthdate = datetime.strptime(birthdate, '%d/%m/%Y'),
+        birthdate = datetime.strptime(birthdate, '%Y-%m-%d'),
         gender=data.get("gender"),
         avatar=data.get("avatar"),
         password=hashed_password,
@@ -74,7 +74,7 @@ def login():
         access_token = create_access_token(
             {"username": user.username, "userid": user.userid}
         )
-       
+
     except UserNotFoundError:
         return jsonify({"message": "User not found"}), 404
     except Exception as e:
