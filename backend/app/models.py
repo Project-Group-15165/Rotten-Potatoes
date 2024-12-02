@@ -32,10 +32,9 @@ class Book:
 
 @dataclass
 class Author:
-    authorid: int      
-    name: str    
-    wiki_link: str                  
-    image: str                  
+    name: str
+    wiki_link: str
+    image: str
     summary: str
     description: str
     authorid: int = 0
@@ -91,14 +90,14 @@ class AlreadyRead:
 class CurrentlyReading:
     pass
 
+
 @dataclass
 class userBook:
     userid: int
-    bookid: int
-    title: str               
-    cover: str                   
-    description: str                
-    format: str                     
-    page_numbers: int             
-    pub_date: datetime  
+    title: str
+    cover: str
+    description: str
+    format: str
+    page_numbers: int
+    pub_date: datetime
     bookid: int = 0

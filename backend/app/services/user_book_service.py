@@ -1,7 +1,7 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.utils.db import get_db_connection
-from app.models import userBooks
+from app.models import userBook
 
 class UserBookService:
     @staticmethod
@@ -15,7 +15,7 @@ class UserBookService:
             )
             user_book_data = cursor.fetchone()
             if user_book_data:
-                user_book = userBooks(**user_book_data)
+                user_book = userBook(**user_book_data)
                 return user_book
             return None
         except Exception as e:
@@ -25,7 +25,7 @@ class UserBookService:
             conn.close()
 
     @staticmethod
-    def add_userBook(userBook: userBooks):
+    def add_userBook(userBook: userBook):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)   
         prompt = """
@@ -54,7 +54,7 @@ class UserBookService:
             conn.close()
 
     @staticmethod
-    def update_userBook(userBook: userBooks):   #update by using bookid and userid
+    def update_userBook(userBook: userBook):   #update by using bookid and userid
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         prompt = """
@@ -72,14 +72,14 @@ class UserBookService:
             cursor.execute(
                 prompt,
                 (
-                    userBook.userID,
+                    userBook.userid,
                     userBook.title,
                     userBook.cover,
                     userBook.description,
                     userBook.format,
                     userBook.page_numbers,
                     userBook.pub_date,
-                    userBook.bookID,  
+                    userBook.bookid,  
                 )
             )
             conn.commit()
