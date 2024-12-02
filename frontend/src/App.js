@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-/* Layout components */
+/* Layout elements */
 import TopContent from './components/Layout/TopContent';
 import Header  from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
@@ -34,23 +34,23 @@ function App() {
         <Header />
         <Routes>
           {/* Main pages */}
-          <Route path="/" exact component={HomePage} />
-          <Route path="/discover/:page" exact component={DiscoverPage} />
-          <Route path="/community" exact component={CommunityPage} />
-          <Route path="/advanced-search" exact component={AdvancedSearch} />
+          <Route path="/" element={<HomePage/>} />
+          <Route path="/discover/:page" element={<DiscoverPage/>} />
+          <Route path="/community" element={<CommunityPage/>} />
+          <Route path="/advanced-search" element={<AdvancedSearch/>} />
           {/* Specific Pages */}
-          <Route path="/book/:bookid" exact component={BookPage} />
-          <Route path="/author/author:id" exact component={AuthorPage} />
-          <Route path="/genre/:genreid" exact component={GenrePage} />
+          <Route path="/book/:bookid" element={<BookPage/>} />
+          <Route path="/author/author:id" element={<AuthorPage/>} />
+          <Route path="/genre/:genreid" element={<GenrePage/>} />
           {/* Auth Pages */}
-          <Route path="/register" component={Register} />
-          <Route path="/login" component={Login} />
-          <Route path="/logout" component={Logout} />
+          <Route path="/register" element={<Register/>} />
+          <Route path="/login" element={<Login/>} />
+          <Route path="/logout" element={<Logout/>} />
           {/* User Pages */}
-          <Route path="/profile" component={ProfilePage} />
-          <Route path="/:username" component={UserPage} />
-          <Route path="/profile/update" exact component={UpdateUser} />
-          <Route path="/profile/delete" exact component={DeleteUser} />
+          <Route path="/profile" element={<ProfilePage/>} />
+          <Route path="/:username" element={<UserPage/>} />
+          <Route path="/profile/update" element={<UpdateUser/>} />
+          <Route path="/profile/delete" element={<DeleteUser/>} />
         </Routes>
         <Footer />
       </div>
