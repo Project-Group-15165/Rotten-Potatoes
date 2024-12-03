@@ -4,6 +4,7 @@ from flask import Flask
 from app.utils.auth import bp
 from app.routes.review_routes import bp as bp1
 from app.routes.user_routes import bp as bp2
+from app.routes.author_routes import bp as bp3
 
 
 def create_app():
@@ -15,4 +16,5 @@ def create_app():
     app.register_blueprint(bp, url_prefix="/auth")
     app.register_blueprint(bp1, url_prefix="/review")
     app.register_blueprint(bp2, url_prefix="")
+    app.register_blueprint(bp3, url_prefix="/author")
     return app

@@ -44,41 +44,26 @@ CREATE TABLE Reviews(
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE WantToRead (
-    userID INT,
-    bookID INT, 
-    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
-    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
-    PRIMARY KEY (userID, bookID)
+CREATE TABLE Lists (
+    listID SERIAL PRIMARY KEY, 
+    list_name TEXT NOT NULL
 );
 
-CREATE TABLE CurrentlyReading (
+CREATE TABLE UserLists (
     userID INT,
-    bookID INT, 
-    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    listID INT,
     FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
-    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
-    PRIMARY KEY (userID, bookID)
+    FOREIGN KEY (listID) REFERENCES Lists(listID) ON DELETE CASCADE,
+    PRIMARY KEY (userID, listID) 
 );
 
-CREATE TABLE AlreadyRead (
-    userID INT,
-    bookID INT, 
+CREATE TABLE ListItems (
+    bookID INT,
+    listID INT,
     added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
     FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
-    PRIMARY KEY (userID, bookID) 
-);
-
-CREATE TABLE CustomList (
-    userID INT,
-    bookID INT, 
-    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    list_name TEXT NOT NULL,
-    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
-    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
-    PRIMARY KEY (userID, bookID) 
+    FOREIGN KEY (listID) REFERENCES Lists(listID) ON DELETE CASCADE,
+    PRIMARY KEY (bookID, listID)
 );
 
 CREATE TABLE Books (
