@@ -2,24 +2,42 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.utils.db import get_db_connection
 from app.models import Review
+from math import ceil
 
 
 class ReviewService:
 
     @staticmethod
-    def get_all_reviews_of_book(bookid):
+    def get_all_reviews_of_book(bookid, page_number, per_page):
+        offset = (page_number - 1) * per_page
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute(
-                "SELECT * FROM reviews WHERE bookid =%s;",
+                "SELECT COUNT(*) FROM reviews WHERE bookid =%s;",
                 (bookid,),
             )
+            result = cursor.fetchone()
+            total_count = result["count"] if result else 0
+
+            page_count = ceil((total_count) / per_page)
+
+            if page_number > page_count:
+                return [], total_count, page_count
+
+            cursor.execute(
+                """SELECT * FROM reviews 
+                WHERE bookid =%s
+                LIMIT %s OFFSET %s;
+                """,
+                (bookid, per_page, offset),
+            )
             reviews_data = cursor.fetchall()
+            print(reviews_data)
             if reviews_data:
                 reviews = [Review(**review) for review in reviews_data]
-                return reviews
-            return None
+                return reviews, total_count, page_count
+            return [], total_count, page_count
         except Exception as e:
             raise e
         finally:
@@ -27,19 +45,36 @@ class ReviewService:
             conn.close()
 
     @staticmethod
-    def get_all_reviews_of_user(userid):
+    def get_all_reviews_of_user(userid, page_number, per_page):
+        offset = (page_number - 1) * per_page
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute(
-                "SELECT * FROM reviews WHERE userid =%s;",
+                "SELECT COUNT(*) FROM reviews WHERE userid =%s;",
                 (userid,),
             )
+            result = cursor.fetchone()
+            total_count = result["count"] if result else 0
+
+            page_count = ceil((total_count) / per_page)
+
+            if page_number > page_count:
+                return [], total_count, page_count
+
+            cursor.execute(
+                """SELECT * FROM reviews 
+                WHERE userid =%s
+                LIMIT %s OFFSET %s;
+                """,
+                (userid, per_page, offset),
+            )
             reviews_data = cursor.fetchall()
+            print(reviews_data)
             if reviews_data:
                 reviews = [Review(**review) for review in reviews_data]
-                return reviews
-            return None
+                return reviews, total_count, page_count
+            return [], total_count, page_count
         except Exception as e:
             raise e
         finally:
