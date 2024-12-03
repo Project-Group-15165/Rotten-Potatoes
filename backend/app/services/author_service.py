@@ -22,6 +22,7 @@ class AuthorService:
                 return author
             return None
         except Exception as e:
+            conn.rollback()
             raise e
         finally:
             cursor.close()
