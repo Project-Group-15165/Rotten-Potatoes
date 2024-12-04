@@ -13,7 +13,7 @@ class AuthorService:
         try:
             cursor.execute(
                 "SELECT * FROM authors WHERE authorid = %s",
-                (authorid),
+                (authorid,),
             )
 
             author_data = cursor.fetchone()
