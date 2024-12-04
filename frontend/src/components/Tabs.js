@@ -19,14 +19,15 @@ const TabsSection = () => {
     setTabs(index);
   };
 
+
   return (
     <>
       <Row className="justify-content-center">
-        <Col className="mt-5 mt-lg-0" lg="9">
+        <Col className="mt-lg-0" lg="9" >
           {/* Menu */}
           <div className="nav-wrapper">
             <Nav
-              className="nav-fill flex-column flex-md-row"
+              className="nav-fill flex-column flex-md-row "
               id="tabs-icons-text"
               pills
               role="tablist"

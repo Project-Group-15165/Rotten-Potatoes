@@ -14,6 +14,7 @@ import {
   NavbarToggler,
   Collapse
 } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,27 +33,23 @@ const Header = () => {
               <Collapse isOpen={isOpen} navbar>
                 <Nav className="ml-auto mx-auto" navbar>
                   <NavItem className="menu-item active">
-                    <NavLink href="#home">Home</NavLink>
+                    <NavLink tag={Link} to="/">Home</NavLink>
                   </NavItem>
                   <UncontrolledDropdown nav inNavbar className="menu-item has-sub">
                     <DropdownToggle nav caret>
                       Discover
                     </DropdownToggle>
                     <DropdownMenu end>
-                      <DropdownItem href="index.html">Books</DropdownItem>
-                      <DropdownItem href="about.html">
-                        Genres
-                      </DropdownItem>
-                      <DropdownItem href="styles.html">
-                        Authors
-                      </DropdownItem>
+                      <DropdownItem tag={Link} to="/discover/books">Books</DropdownItem>
+                      <DropdownItem tag={Link} to="/discover/genres">Genres</DropdownItem>
+                      <DropdownItem tag={Link} to="/discover/authors">Authors</DropdownItem>
                     </DropdownMenu>
                   </UncontrolledDropdown>
                   <NavItem className="menu-item">
-                    <NavLink href="#featured-books">Community</NavLink>
+                    <NavLink tag={Link} to="/community">Community</NavLink>
                   </NavItem>
                   <NavItem className="menu-item">
-                    <NavLink href="#popular-books">Advanced Search</NavLink>
+                    <NavLink tag={Link} to="/advanced-search">Advanced Search</NavLink>
                   </NavItem>
                 </Nav>
               </Collapse>

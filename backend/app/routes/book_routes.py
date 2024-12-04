@@ -76,5 +76,15 @@ def delete_book(identity,bookid):
     except Exception as e:
         return jsonify({"message": "error can't delete book" + str(e)}), 500
 
-    return jsonify({"message": "success"}), 200
+    return jsonify({"message": "success"}), 200 
     
+@bp.route("/bookid/<bookid>", methods=["GET"])
+def get_book_by_id(bookid):
+    try:
+        book = BookService.get_book_by_id(bookid)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+    if book:
+        return jsonify(book), 201
+    else:
+        return jsonify({"message": "no such book"}), 404

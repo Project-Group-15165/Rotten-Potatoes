@@ -18,9 +18,9 @@ import {
   faSignIn,
   
 } from '@fortawesome/free-solid-svg-icons';
+import { Link } from "react-router-dom";
 
 const TopContent = () => {
-  const [isSearchVisible, setIsSearchVisible] = useState(true);
   const {user} = useContext(AuthContext);
 
 
@@ -52,7 +52,7 @@ const TopContent = () => {
           <Col md={4} sm={12}>
           <div className="d-flex justify-content-center">
                 <div className="main-logo">
-                    <a href="index.html"><img src="assets/images/potato-logo.png"  alt="logo"/></a>
+                    <Link to="/"><img src="assets/images/potato-logo.png"  alt="logo"/></Link>
                 </div>
 
 			</div>
@@ -61,27 +61,27 @@ const TopContent = () => {
             <div className="right-element d-flex align-items-center justify-content-end gap-4">
               {
                 user ? 
-                <a href="#" className="user-account for-buy text-decoration-none">
+                <Link to="/profile" className="user-account for-buy text-decoration-none">
                 <FontAwesomeIcon icon={faUser} className="me-2" />
                 <span >Account </span>
-                </a>
+                </Link>
                 : 
-                <a href="#" className="user-account for-buy text-decoration-none">
+                <Link to="/login" className="user-account for-buy text-decoration-none">
                 <FontAwesomeIcon icon={faSignIn} className="me-2" />
                 <span >Log in</span>
-              </a>
+              </Link>
               }
               {
                 user ? 
-                <a href="#" className="user-account for-buy text-decoration-none">
+                <Link to="/logout" className="user-account for-buy text-decoration-none">
                 <FontAwesomeIcon icon={faSignOut} className="me-2" />
                 <span >Logout</span>
-                </a>
+                </Link>
                 : 
-                <a href="#" className="user-account for-buy text-decoration-none">
+                <Link to="/register" className="user-account for-buy text-decoration-none">
                   <FontAwesomeIcon icon={faSignIn} className="me-2" />
                 <span >Register</span>
-              </a>
+              </Link>
               }
             </div>
           </Col>
