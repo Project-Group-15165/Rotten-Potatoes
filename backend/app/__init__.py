@@ -5,6 +5,8 @@ from app.utils.auth import bp
 from app.routes.review_routes import bp as bp1
 from app.routes.user_routes import bp as bp2
 from app.routes.author_routes import bp as bp3
+from app.routes.book_routes import bp as bp4
+from app.routes.comment_routes import bp as bp5
 
 
 def create_app():
@@ -17,4 +19,6 @@ def create_app():
     app.register_blueprint(bp1, url_prefix="/review")
     app.register_blueprint(bp2, url_prefix="")
     app.register_blueprint(bp3, url_prefix="/author")
+    app.register_blueprint(bp4, url_prefix="/book")
+    app.register_blueprint(bp5, url_prefix="/comment")
     return app
