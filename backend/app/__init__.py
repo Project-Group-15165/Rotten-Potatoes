@@ -7,6 +7,8 @@ from app.routes.user_routes import bp as bp2
 from app.routes.author_routes import bp as bp3
 from app.routes.book_routes import bp as bp4
 from app.routes.comment_routes import bp as bp5
+from app.routes.progress_routes import bp as bp6
+from app.routes.list_routes import bp as bp7
 
 
 def create_app():
@@ -21,4 +23,6 @@ def create_app():
     app.register_blueprint(bp3, url_prefix="/author")
     app.register_blueprint(bp4, url_prefix="/book")
     app.register_blueprint(bp5, url_prefix="/comment")
+    app.register_blueprint(bp6, url_prefix="/progress")
+    app.register_blueprint(bp7, url_prefix="/list")
     return app
