@@ -11,7 +11,7 @@ class UserBookService:
         try:
             cursor.execute(
                 "SELECT * FROM userBooks WHERE userid = %s AND bookid = %s;",
-                (userid, bookid)
+                (userid, bookid,)
             )
             user_book_data = cursor.fetchone()
             if user_book_data:
@@ -19,6 +19,7 @@ class UserBookService:
                 return user_book
             return None
         except Exception as e:
+            conn.rollback()
             raise e
         finally:
             cursor.close()
@@ -32,6 +33,7 @@ class UserBookService:
         INSERT INTO userBooks (userid, title, cover, description, format, page_numbers, pub_date)
         VALUES (%s, %s, %s, %s, %s, %s, %s);
         """
+
         try:
             cursor.execute(
                 prompt,
@@ -43,12 +45,12 @@ class UserBookService:
                     userBook.format,
                     userBook.page_numbers,
                     userBook.pub_date,
-                )
+                ),
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
-            conn.rollback()
+                conn.rollback()
+                raise e
         finally:
             cursor.close()
             conn.close()
@@ -59,20 +61,18 @@ class UserBookService:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         prompt = """
             UPDATE userBooks SET
-                userID = %s,
                 title = %s,
                 cover = %s,
                 description = %s,
                 format = %s,
                 page_numbers = %s,
                 pub_date = %s
-            WHERE userID = %s AND bookID = %s;
+            WHERE userid = %s AND bookid = %s;
             """    
         try:
             cursor.execute(
                 prompt,
                 (
-                    userBook.userid,
                     userBook.title,
                     userBook.cover,
                     userBook.description,

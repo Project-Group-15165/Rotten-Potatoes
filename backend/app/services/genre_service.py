@@ -7,13 +7,13 @@ from app.models import Genre
 class GenreService:
 
     @staticmethod
-    def get_genre_by_id(genre_id):
+    def get_genre_by_id(genreid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute(
                 "SELECT * FROM genres WHERE id = %s;",
-                (genre_id,),
+                (genreid,),
             )
             genre_data = cursor.fetchone()
             if genre_data:
@@ -21,6 +21,7 @@ class GenreService:
                 return genre
             return None
         except Exception as e:
+            conn.rollback()
             raise e
         finally:
             cursor.close()
@@ -40,8 +41,8 @@ class GenreService:
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
@@ -61,25 +62,25 @@ class GenreService:
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
 
     @staticmethod
-    def delete_genre(genre_id):
+    def delete_genre(genreid):
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
             cursor.execute(
                 "DELETE FROM genres WHERE id = %s;",
-                (genre_id,),
+                (genreid,),
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
