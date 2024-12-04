@@ -68,27 +68,25 @@ class Review:
 
 @dataclass
 class Progress:
-    pass
+    userid: int
+    bookid: int
+    reading_status: str
+    pages_read: int
+    started_reading: datetime
+    finished_reading: datetime
 
 
 @dataclass
-class CustomList:
-    pass
-
-
-@dataclass
-class WantToRead:
-    pass
-
+class List:
+    listid: int
+    listname: str
+    creationdate: datetime = field(default_factory=datetime.now)
 
 @dataclass
-class AlreadyRead:
-    pass
-
-
-@dataclass
-class CurrentlyReading:
-    pass
+class ListItem:
+    bookid: int
+    listid: int
+    addedon: datetime = field(default_factory=datetime.now)
 
 
 @dataclass
