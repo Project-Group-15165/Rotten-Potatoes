@@ -19,7 +19,7 @@ def create_app():
     # register_blueprints(app)
     app.register_blueprint(bp, url_prefix="/auth")
     app.register_blueprint(bp1, url_prefix="/review")
-    app.register_blueprint(bp2, url_prefix="")
+    app.register_blueprint(bp2, url_prefix="/user")
     app.register_blueprint(bp3, url_prefix="/author")
     app.register_blueprint(bp4, url_prefix="/book")
     app.register_blueprint(bp5, url_prefix="/comment")

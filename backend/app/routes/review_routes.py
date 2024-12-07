@@ -6,6 +6,34 @@ from app.services import ReviewService
 bp = Blueprint("review", __name__)
 
 
+@bp.route("/get/<reviewid>", methods=["GET"])
+def get_review(reviewid):
+    try:
+        review_data = ReviewService.get_review(reviewid=reviewid)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+    if review_data:
+        return jsonify(review_data), 201
+    else:
+        return jsonify({"message": "no such review"}), 404
+
+
+@bp.route("/getall", methods=["GET"])
+def all_reviews():
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    try:
+        reviews = ReviewService.get_all_reviews(per_page=per_page, page_number=page)
+    except Exception as e:
+        return jsonify({"message": "error can't get reviews" + str(e)}), 500
+
+    if reviews:
+        return jsonify(reviews), 201
+    else:
+        return jsonify({"message": "no reviews"}), 404
+
+
 @bp.route("/bookid/<bookid>", methods=["GET"])
 def book_reviews(bookid):
     page = request.args.get("page", 1, type=int)

@@ -8,6 +8,43 @@ from math import ceil
 class ReviewService:
 
     @staticmethod
+    def get_all_reviews(page_number, per_page):
+        offset = (page_number - 1) * per_page
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute(
+                "SELECT COUNT(*) FROM reviews ;",
+            )
+            result = cursor.fetchone()
+            total_count = result["count"] if result else 0
+
+            page_count = ceil((total_count) / per_page)
+
+            if page_number > page_count:
+                return [], page_count, page_count
+
+            cursor.execute(
+                """SELECT reviewid FROM reviews 
+                LIMIT %s OFFSET %s;
+                """,
+                (
+                    per_page,
+                    offset,
+                ),
+            )
+            reviews_data = cursor.fetchall()
+            print(reviews_data)
+            if reviews_data:
+                return reviews_data, page_count, page_count
+            return [], page_count, page_count
+        except Exception as e:
+            raise e
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
     def get_all_reviews_of_book(bookid, page_number, per_page):
         offset = (page_number - 1) * per_page
         conn = get_db_connection()
@@ -23,7 +60,7 @@ class ReviewService:
             page_count = ceil((total_count) / per_page)
 
             if page_number > page_count:
-                return [], total_count, page_count
+                return [], page_count, page_count
 
             cursor.execute(
                 """SELECT * FROM reviews 
@@ -36,8 +73,8 @@ class ReviewService:
             print(reviews_data)
             if reviews_data:
                 reviews = [Review(**review) for review in reviews_data]
-                return reviews, total_count, page_count
-            return [], total_count, page_count
+                return reviews, page_count, page_count
+            return [], page_count, page_count
         except Exception as e:
             raise e
         finally:
@@ -60,10 +97,10 @@ class ReviewService:
             page_count = ceil((total_count) / per_page)
 
             if page_number > page_count:
-                return [], total_count, page_count
+                return [], page_count, page_count
 
             cursor.execute(
-                """SELECT * FROM reviews 
+                """SELECT reviewid FROM reviews 
                 WHERE userid =%s
                 LIMIT %s OFFSET %s;
                 """,
@@ -72,9 +109,8 @@ class ReviewService:
             reviews_data = cursor.fetchall()
             print(reviews_data)
             if reviews_data:
-                reviews = [Review(**review) for review in reviews_data]
-                return reviews, total_count, page_count
-            return [], total_count, page_count
+                return reviews_data, page_count, page_count
+            return [], page_count, page_count
         except Exception as e:
             raise e
         finally:
@@ -82,21 +118,23 @@ class ReviewService:
             conn.close()
 
     @staticmethod
-    def get_review(userid, bookid):
+    def get_review(reviewid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
+        prompt = """SELECT T1.*,T2.username,T2.avatar,T3.title 
+        FROM reviews as T1 
+        JOIN users as T2 ON T1.userid = T2.userid
+        JOIN books as T3 ON T1.bookid = T3.bookid
+        WHERE T1.reviewid=%s;
+        """
         try:
             cursor.execute(
-                "SELECT * FROM reviews WHERE userid =%s And bookid =%s;",
-                (
-                    userid,
-                    bookid,
-                ),
+                prompt,
+                (reviewid,),
             )
             review_data = cursor.fetchone()
             if review_data:
-                review = Review(**review_data)
-                return review
+                return review_data
             return None
         except Exception as e:
             raise e

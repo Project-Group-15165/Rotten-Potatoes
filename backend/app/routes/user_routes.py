@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from app.utils.auth import jwt_required
 from app.models import User
 from app.services import UserService
+from datetime import datetime, timedelta, timezone
 
 bp = Blueprint("user", __name__)
 
@@ -22,6 +23,7 @@ def userprofile(identity):
 def update_profile(identity):
     data = request.get_json()
     userid = identity["userid"]
+    birthdate = data.get("birthdate")
     try:
         user = User(
             userid=userid,
@@ -30,13 +32,15 @@ def update_profile(identity):
             last_name=data.get("last_name"),
             middle_name=data.get("middle_name"),
             email=data.get("email"),
-            birthdate=data.get("birthdate"),
+            birthdate=datetime.now(),
             avatar=data.get("avatar"),
             gender=data.get("gender"),
-            password=data.get("password"),
+            password="",
         )
+        print(user)
     except Exception as e:
-        return jsonify({"message": "Not enough arguments for the update"}), 400
+        return jsonify({"message": "Not enough arguments for the update" + str(e)}), 400
+
     try:
         UserService.update_user(user=user)
         return jsonify({"message": "Updated successfully"}), 200

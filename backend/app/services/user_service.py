@@ -62,6 +62,7 @@ class UserService:
                 user = User(**user_data)
                 return jsonify(
                     {
+                        "userid": user.userid,
                         "username": user.username,
                         "name": user.name,
                         "middle_name": user.middle_name,
@@ -115,7 +116,7 @@ class UserService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         prompt = """UPDATE users
-        SET username=%s, name=%s, middle_name=%s, last_name=%s, email=%s, birthdate=%s, gender=%s, avatar=%s, password=%s
+        SET username=%s, name=%s, middle_name=%s, last_name=%s, email=%s, gender=%s, avatar=%s
         WHERE userid =%s;
         """
         try:
@@ -127,17 +128,16 @@ class UserService:
                     user.middle_name,
                     user.last_name,
                     user.email,
-                    user.birthdate,
                     user.gender,
                     user.avatar,
-                    user.password,
                     user.userid,
                 ),
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
+
         finally:
             cursor.close()
             conn.close()
