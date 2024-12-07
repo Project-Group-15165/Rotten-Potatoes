@@ -88,3 +88,14 @@ def get_book_by_id(bookid):
         return jsonify(book), 201
     else:
         return jsonify({"message": "no such book"}), 404
+    
+@bp.route("/get/<bookid>", methods=["GET"])
+def get_bookCard_by_id(bookid):
+    try:
+        book = BookService.get_bookCard_by_id(bookid)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+    if book:
+        return jsonify(book), 201
+    else:
+        return jsonify({"message": "no such book"}), 404

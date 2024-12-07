@@ -120,6 +120,27 @@ class BookService:
                 finally:
                     cur.close()
                     conn.close()
+    
+    @staticmethod
+    def get_bookCard_by_id(bookid: int):
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                query = """SELECT bookid, title, cover FROM books 
+                WHERE bookID = %s
+                """   
+                try:      
+                    cur.execute(query, (bookid,))
+                    book_data = cur.fetchone() #only one book
+                    if book_data:
+                        return book_data
+                    return None
+                except Exception as e:
+                    raise e 
+                finally:
+                    cur.close()
+                    conn.close()
+        
         
        
     
