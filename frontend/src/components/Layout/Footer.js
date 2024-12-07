@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
+import potato_logo from '../../assets/images/potato-logo.png'
 
 const Footer = () => {
   return (
@@ -9,7 +10,7 @@ const Footer = () => {
           <Col md="4">
             <div className="footer-item">
               <div className="company-brand">
-                <img src="./assets/images/potato-logo.png" alt="logo" className="footer-logo" />
+                <img src={potato_logo} alt="logo" className="footer-logo" />
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis sed ptibus liberolectus nonet psryroin. Amet sed lorem posuere sit iaculis amet, ac urna. Adipiscing fames semper erat ac in suspendisse iaculis.</p>
               </div>
             </div>

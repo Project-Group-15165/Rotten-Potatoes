@@ -1,5 +1,6 @@
-import { useState , useContext} from "react";
+import {  useContext} from "react";
 import AuthContext from '../../context/AuthContext';
+import potato_logo from '../../assets/images/potato-logo.png'
 
 import {
   Container,
@@ -52,7 +53,7 @@ const TopContent = () => {
           <Col md={4} sm={12}>
           <div className="d-flex justify-content-center">
                 <div className="main-logo">
-                    <Link to="/"><img src="assets/images/potato-logo.png"  alt="logo"/></Link>
+                    <Link to="/"><img src={potato_logo}  alt="logo"/></Link>
                 </div>
 
 			</div>

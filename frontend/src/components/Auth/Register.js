@@ -1,6 +1,7 @@
 import React from "react";
 import {register} from '../../services/authService'
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // reactstrap components
 import {
@@ -22,6 +23,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faUserCircle, faUserAlt, faEnvelope, faCalendarAlt, faVenusMars, faImage, faLock } from '@fortawesome/free-solid-svg-icons';
 
 function Register() {
+
+  const navigate = useNavigate()
 
   const [userData, setUserData] = useState({
     username : "",
@@ -65,6 +68,7 @@ function Register() {
       console.log(status)
       if (status === 201) { // Check if the status code indicates success
         console.log('Registration successful');
+        navigate('/login')
       } else {
         console.error('Registration failed');
       }

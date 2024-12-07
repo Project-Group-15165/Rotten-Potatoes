@@ -10,11 +10,16 @@ export const register = async (userData) => {
   return response.status;
 };
 
+export const update = async (userData) => {
+  const response = await authorizedApi.post('/user/profile/update', userData);
+  return response.status;
+};
+
 export const getCurrentUser = async () => {
   const token = localStorage.getItem('token');
   if (!token) return null;
 
-  const response = await authorizedApi.get('/profile', {
+  const response = await authorizedApi.get('/user/profile', {
     headers: {
       Authorization: `Bearer ${token}`
     }

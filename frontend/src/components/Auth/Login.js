@@ -2,6 +2,7 @@ import React from "react";
 import {login,getCurrentUser} from '../../services/authService'
 import { useState , useContext} from "react";
 import AuthContext from '../../context/AuthContext';
+import { useNavigate } from "react-router-dom";
 
 // reactstrap components
 import {
@@ -26,6 +27,7 @@ function Login() {
   const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");
   const { user, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const getIsFormValid = () => { 
     return ( 
@@ -42,6 +44,7 @@ function Login() {
         localStorage.setItem('token', access_token); // Store the token in local storage
         const current_user = getCurrentUser();
         setUser(current_user);
+        navigate('/')
       } else {
         console.error('Token is undefined');
       }

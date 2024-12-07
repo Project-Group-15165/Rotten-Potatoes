@@ -1,5 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthProvider';
 /* Layout elements */
 import TopContent from './components/Layout/TopContent';
 import Header from './components/Layout/Header';
@@ -29,6 +30,7 @@ function App() {
   return (
     <Router>
       <div id="header-wrap">
+        <AuthProvider>
         <TopContent />
         <Header />
         <Routes>
@@ -54,6 +56,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
+        </AuthProvider>
       </div>
     </Router>
   );
