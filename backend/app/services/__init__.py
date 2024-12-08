@@ -2,7 +2,7 @@ from .author_service import AuthorService
 from .book_service import BookService
 from .comment_service import CommentService
 from .genre_service import GenreService
-# from .list_service import ListService
+from .list_service import ListService
 from .progress_service import ProgressService
 from .review_service import ReviewService
 from .user_book_service import UserBookService
@@ -13,7 +13,7 @@ __all__ = [
     "BookService",
     "CommentService",
     "GenreService",
-    # "ListService",
+    "ListService",
     "ProgressService",
     "ReviewService",
     "UserBookService",

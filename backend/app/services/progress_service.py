@@ -7,16 +7,33 @@ from app.models import Progress
 class ProgressService:
 
     @staticmethod
+    def get_all_progress_of_user(userid):
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute(
+                "SELECT * FROM progress WHERE userid = %s;",
+                (userid,)
+            )
+            progress_data = cursor.fetchall()
+            if progress_data:
+                progress_list = [Progress(**row) for row in progress_data]
+                return progress_list
+            return []
+        except Exception as e:
+            raise e
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
     def get_progress(userid, bookid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute(
                 "SELECT * FROM progress WHERE userid = %s And bookid = %s;",
-                (
-                    userid,
-                    bookid,
-                ),
+                (userid, bookid,)
             )
             progress_data = cursor.fetchone()
             if progress_data:
@@ -50,8 +67,8 @@ class ProgressService:
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
@@ -78,30 +95,24 @@ class ProgressService:
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
 
     @staticmethod
-    def delete_progress(
-        userid,
-        bookid,
-    ):
+    def delete_progress(userid, bookid):
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
             cursor.execute(
                 "DELETE FROM progress WHERE userid = %s And bookid = %s;",
-                (
-                    userid,
-                    bookid,
-                ),
-            )
+                (userid, bookid))
+            conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()

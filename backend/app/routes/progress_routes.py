@@ -5,72 +5,81 @@ from app.services import ProgressService
 
 bp = Blueprint("progress", __name__)
 
-#not sure about route=userid
-@bp.route("/userid/<userid>", methods=["GET"])
+#restricting input can be done in frontend, discuss
+#pages read must be an integer between 0-num of pages
+#reading status must have two values, read, reading -> changing create sql, discuss
+
+@bp.route("/all", methods=["GET"])
 @jwt_required
-def user_book_progress(identity, bookid):
+def get_all_progress_of_user(identity):
     try:
-        progress = ProgressService.get_progress(userid=identity["userid"], bookid=bookid)
-        print(progress)
+        progress_list = ProgressService.get_all_progress_of_user(userid=identity["userid"])
+        if not progress_list:
+            return jsonify({"message": "Progress not found"}), 404
+        return jsonify(progress_list), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-    
-    if progress:
-        return jsonify(progress), 201
-    else:
-        return jsonify({"message": "no progress"}), 404
 
-#user and book id are composite, do i create this key for every book automatically
-#book id can be added with get json, not sure
-@bp.route("/userid/<userid>", methods=["POST"])
+@bp.route("/<bookid>", methods=["GET"])
+@jwt_required
+def get_progress(identity, bookid):
+    try:
+        progress = ProgressService.get_progress(userid=identity["userid"], bookid=bookid)
+        if not progress:
+            return jsonify({"message": "Progress not found"}), 404
+        return jsonify(progress), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+#add get book by id, to avoid adding books that dont exist
+#check if data is valid for all parameters
+@bp.route("/<bookid>/add", methods=["POST"])
 @jwt_required
 def add_progress(identity, bookid):
     data = request.get_json()
-    status = data.get("reading status")
-    pages_read = data.get("pages read")
-    started = data.get("started reading")
-    finished = data.get("finished reading")
-    #names may need to be updated
-    progress = Progress(userid=identity["userid"], bookid=bookid, status=status, 
-                        pages_read=pages_read, started_reading=started, finished_reading=finished)
-
+    progress = Progress(
+        userid=identity["userid"],
+        bookid=bookid,
+        reading_status=data.get("reading_status"),
+        pages_read=data.get("pages_read"),
+        started_reading=data.get("started_reading"),
+        finished_reading=data.get("finished_reading"),
+    )
     try:
-        ProgressService.add_progress(progress=progress)
+        ProgressService.add_progress(progress)
+        return jsonify({"message": "Progress added"}), 201
     except Exception as e:
-        return jsonify({"message": "failed adding progress"}), 500
-    
-    return jsonify({"message:", "progress added"}), 201
+        return jsonify({"message": str(e)}), 500
 
-
-#update progress
-@bp.route("/userid/<userid>", methods=["PUT"])
+#even if data section is empty, it gets updated, not sure if its a problem
+@bp.route("/<bookid>/update", methods=["PUT"])
 @jwt_required
 def update_progress(identity, bookid):
-    userid=identity["userid"]
-    progress = ProgressService.get_progress(userid=userid, bookid=bookid)
-    data = request.get_json()
-    # not everything need to be updated, check this part
-    progress.reading_status = data.get("reading_status")
-    progress.pages_read = data.get("pages_read")
-    progress.started_reading = data.get("started_reading")
-    progress.finished_reading = data.get("finished_reading")
-    try:
-        ProgressService.update_progress(progress=progress)
-    except Exception as e:
-        return jsonify({"message": "update progress failed"}), 500
-    
-    return jsonify({"message": "progress updated"}), 200
-
-#delete progress
-@bp.route("/userid/<userid>", methods=["DELETE"])
-@jwt_required
-def delete_progress(identity, bookid):
-    userid=identity["userid"]
+    userid = identity["userid"]
     progress = ProgressService.get_progress(userid=userid, bookid=bookid)
     if not progress:
-        return jsonify({"message:", "progress not found"}), 404
+        return jsonify({"message": "Progress not found"}), 404
+    data = request.get_json()
+    fields_to_update = ["reading_status", "pages_read", "started_reading", "finished_reading"]
+    for field in fields_to_update:
+        if field in data:
+            setattr(progress, field, data[field])
+    try:
+        ProgressService.update_progress(progress)
+        return jsonify({"message": "Progress updated"}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+
+@bp.route("/<bookid>/delete", methods=["DELETE"])
+@jwt_required
+def delete_progress(identity, bookid):
+    userid = identity["userid"]
+    progress = ProgressService.get_progress(userid=userid, bookid=bookid)
+    if not progress:
+        return jsonify({"message": "Progress not found"}), 404
     try:
         ProgressService.delete_progress(userid=userid, bookid=bookid)
+        return jsonify({"message": "Progress deleted"}), 200
     except Exception as e:
-        return jsonify({"message:", "progress cannot be deleted"}), 200
-
+        return jsonify({"message": str(e)}), 500
