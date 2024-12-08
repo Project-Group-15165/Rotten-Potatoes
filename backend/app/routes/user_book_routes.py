@@ -8,9 +8,11 @@ from datetime import datetime
 bp = Blueprint("userBooks", __name__)
 
 #get specific 
-@bp.route("/userid/<userid>", methods=["GET"])
+@bp.route("/<bookid>", methods=["GET"])
 @jwt_required
 def get_userBook(identity, bookid):
+    # data = request.get_json()
+    # bookid=data.get("bookid")
     try:
         books = UserBookService.get_userBook(userid=identity["userid"], bookid=bookid)
         if books:
@@ -23,6 +25,7 @@ def get_userBook(identity, bookid):
 @jwt_required
 def add_userBook(identity):
     data = request.get_json()
+
     title = data.get("title")
     cover = data.get("cover")
     description = data.get("description")
@@ -37,7 +40,7 @@ def add_userBook(identity):
         description=description,
         format=format,
         page_numbers=int(page_numbers),
-        pub_date = datetime.strptime(pub_date, '%Y-%m-%d')
+        pub_date = datetime.strptime(pub_date, '%Y-%m-%d'),
     )
    
     try:
@@ -47,14 +50,15 @@ def add_userBook(identity):
     
     return jsonify({"message": "Book added successfully"}), 201
 
-@bp.route("/update", methods=["PUT"])
+@bp.route("/update/<bookid>", methods=["PUT"])
 @jwt_required
 def update_userBook(identity, bookid):
 
     userid=identity["userid"]
-    userBook = UserBookService.get_userBook(userid=userid, bookid=bookid)
+    userBook = UserBookService.get_userBook(userid=identity["userid"], bookid=bookid)
 
     data = request.get_json()
+
     userBook.title = data.get("title")
     userBook.cover = data.get("cover")
     userBook.description = data.get("description")
@@ -67,18 +71,17 @@ def update_userBook(identity, bookid):
     except Exception as e:
         return jsonify({"message": "error can't update userbook"}), 500
 
-    return jsonify({"message": "success"}), 200
+    return jsonify({"message": "success: userbook updated"}), 200
 
-@bp.route("/delete", methods=["DELETE"])
+@bp.route("/delete/<bookid>", methods=["DELETE"])
 @jwt_required
 def delete_userBook(identity, bookid):
     userid = identity["userid"]
-    review = UserBookService.get_userBook(userid=userid, bookid=bookid)
-    if not review:
+    userbook = UserBookService.get_userBook(userid, bookid)
+    if not userbook:
         return jsonify({"message": "no review to delete"}), 404
     try:
         UserBookService.delete_user_book(userid=userid, bookid=bookid)
     except Exception as e:
-        return jsonify({"message": "error can't delete review"}), 500
-
-    return jsonify({"message": "success"}), 200
+        return jsonify({"message": "error can't delete review"+ str(e)}), 500
+    return jsonify({"message": "success: userbook deleted"}), 200

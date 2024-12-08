@@ -79,6 +79,7 @@ class UserBookService:
                     userBook.format,
                     userBook.page_numbers,
                     userBook.pub_date,
+                    userBook.userid,
                     userBook.bookid,  
                 )
             )
@@ -90,24 +91,16 @@ class UserBookService:
             cursor.close()
     
     @staticmethod
-    def delete_user_book(
-        userid,
-        bookid,
-    ):
+    def delete_user_book(userid, bookid):
         conn = get_db_connection()
         cursor = conn.cursor()
+        prompt = """DELETE FROM userbooks WHERE userid =%s AND bookid = %s;"""
         try:
-            cursor.execute(
-                "DELETE FROM userBook WHERE user_id = %s AND book_id = %s;",
-                (
-                    userid,
-                    bookid,
-                ),
-            )
+            cursor.execute(prompt, (userid, bookid,))
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
