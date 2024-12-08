@@ -5,7 +5,7 @@ from app.services import AuthorService
 
 bp = Blueprint("author", __name__)
 
-@bp.route("/authorid/<authorid>", methods=["GET"])
+@bp.route("/<authorid>", methods=["GET"])
 def get_author(authorid):
     try:
         author = AuthorService.get_author(authorid=authorid)
@@ -40,8 +40,8 @@ def add_author(identity):
 @bp.route("/<authorid>/update", methods=["PUT"])
 @jwt_required
 def update_author(identity, authorid):
+    author = AuthorService.get_author(authorid)
     data = request.get_json()
-    author = AuthorService.get_author(authorid=authorid)
     if not author:
         return jsonify({"message": "Author not found"}), 404
 
@@ -56,6 +56,12 @@ def update_author(identity, authorid):
     if data.get("summary"):
         author.summary = data.get("summary")
 
+    # author.name = data.get("name")
+    # author.wiki_link = data.get("wiki_link")
+    # author.image = data.get("image")
+    # author.description = data.get("description")
+    # author.summary = data.get("summary")
+
     try:
         AuthorService.update_author(author=author)
     except Exception as e:
@@ -66,14 +72,25 @@ def update_author(identity, authorid):
 
 @bp.route("/<authorid>/delete", methods=["DELETE"])
 @jwt_required
-def delete_author(authorid):
-    author = AuthorService.get_author(authorid=authorid)
+def delete_author(identity, authorid):
+    author = AuthorService.get_author(authorid)
     if not author:
         return jsonify({"message": "Author not found"}), 404
-
     try:
         AuthorService.delete_author(authorid=authorid)
     except Exception as e:
         return jsonify({"message": "error cannot delete author"}), 500
 
     return jsonify({"message": "Author deleted successfully"}), 200
+
+@bp.route("/get/<authorid>", methods=["GET"])
+def get_authorcard(authorid):
+    try:
+        author = AuthorService.get_authorCard(authorid=authorid)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+    if author:
+        return jsonify(author), 200
+    else:
+        return jsonify({"message": "Author not found"}), 404

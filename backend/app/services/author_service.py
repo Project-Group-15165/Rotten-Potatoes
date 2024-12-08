@@ -61,8 +61,9 @@ class AuthorService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-        prompt = """UPDATE authors SET name = %s, wiki_link = %s, image = %s, bio = %s;
-        """
+        prompt = """UPDATE authors SET name = %s, wiki_link = %s, image = %s, description= %s, summary=%s
+                WHERE authorid =%s;
+                """
         try:
             cursor.execute(
                 prompt,
@@ -71,6 +72,7 @@ class AuthorService:
                     author.wiki_link,
                     author.image,
                     author.description,
+                    author.summary,
                     author.authorid,
                 ),
             )
@@ -83,14 +85,37 @@ class AuthorService:
             conn.close()
 
     @staticmethod
-    def delete_author(authorid):
+    def delete_author(authorid : int):
         conn = get_db_connection()
         cursor = conn.cursor()
+        prompt = """DELETE FROM authors WHERE authorid = %s;"""
         try:
-            cursor.execute("DELETE FROM authors WHERE authorid = %s", (authorid))
+            cursor.execute(prompt, (authorid,))
+            conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def get_authorCard(authorid):
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute(
+                "SELECT authorid, name, image FROM authors WHERE authorid = %s",
+                (authorid,),
+            )
+
+            author_data = cursor.fetchone()
+            if author_data:
+                return author_data
+            return None
+        except Exception as e:
+            conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
