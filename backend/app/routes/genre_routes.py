@@ -35,23 +35,23 @@ def add_genre(identity):   #do i need jwt&identity when adding genre?
     return jsonify({"message": "success: genre added"}), 201
 
 
-@bp.route("/update", methods=["PUT"])
+@bp.route("/<genreid>/update", methods=["PUT"])
 @jwt_required
-def update_genre(genreid):
+def update_genre(identity,genreid):
     genre = GenreService.get_genre_by_id(genreid=genreid)
     data = request.get_json()
     genre.name = data.get("name")
     try:
-        Genre.update_genre(genre=genre)
+        GenreService.update_genre(genre=genre)
     except Exception as e:
         return jsonify({"message": "error can't update genre"}), 500
 
     return jsonify({"message": "success updated genre"}), 200
 
 
-@bp.route("/delete", methods=["DELETE"])
+@bp.route("/<genreid>/delete", methods=["DELETE"])
 @jwt_required
-def delete_review(genreid):
+def delete_review(identity,genreid):
     genre = GenreService.get_genre_by_id(genreid=genreid)
     if not genre:
         return jsonify({"message": "no genre to delete"}), 404

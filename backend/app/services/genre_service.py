@@ -12,7 +12,7 @@ class GenreService:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute(
-                "SELECT * FROM genres WHERE id = %s;",
+                "SELECT * FROM genres WHERE genreid = %s;",
                 (genreid,),
             )
             genre_data = cursor.fetchone()
@@ -51,7 +51,7 @@ class GenreService:
     def update_genre(genre: Genre):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        prompt = """UPDATE genres SET name=%s, WHERE genreid = %s;"""
+        prompt = """UPDATE genres SET name=%s WHERE genreid = %s;"""
         try:
             cursor.execute(
                 prompt,
@@ -74,7 +74,7 @@ class GenreService:
         cursor = conn.cursor()
         try:
             cursor.execute(
-                "DELETE FROM genres WHERE id = %s;",
+                "DELETE FROM genres WHERE genreid = %s;",
                 (genreid,),
             )
             conn.commit()

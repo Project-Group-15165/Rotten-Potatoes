@@ -42,8 +42,8 @@ class Author:
 
 @dataclass
 class Genre:
-    genreid: int
     name: str
+    genreid: int = 0
 
 
 @dataclass
