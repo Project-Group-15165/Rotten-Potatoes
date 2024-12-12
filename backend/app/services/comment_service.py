@@ -2,23 +2,40 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.utils.db import get_db_connection
 from app.models import Comment
+from math import ceil
 
 class CommentService:
     
     @staticmethod
-    def get_all_comments_of_book(bookid : int):
+    def get_all_comments_of_book(bookid : int, page_number, per_page):
+        offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 try:
                     cur.execute(
-                        "SELECT * FROM Comments WHERE bookid =%s;",
-                        (bookid,)
+                        "SELECT count(*) FROM Comments WHERE bookid =%s;",
+                        (bookid,),
                     )
-                    all_comments = cur.fetchall()
-                    if all_comments:
-                        comments = [Comment(**comment) for comment in all_comments]
-                        return comments
+                    result = cur.fetchone()
+                    total_count = result["count"] if result else 0
+
+                    page_count = ceil((total_count) / per_page)
+
+                    if page_number > page_count:
+                        return [], page_count, page_count
+                    
+                    cur.execute(
+                        """SELECT commentid FROM comments 
+                        WHERE bookid =%s
+                        LIMIT %s OFFSET %s;
+                        """,
+                        (bookid, per_page, offset),
+                    )
+                    
+                    commentIds = cur.fetchall()
+                    if commentIds:
+                        return commentIds
                     return None
                 except Exception as e:
                     raise e
@@ -27,43 +44,60 @@ class CommentService:
                     conn.close()
     
     @staticmethod
-    def get_all_comments_of_user(userid : int):
+    def get_all_comments_of_user(userid : int, page_number, per_page):
+        offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 try:
                     cur.execute(
-                        "SELECT * FROM Comments WHERE userid =%s;",
-                        (userid)
+                        "SELECT count(*) FROM Comments WHERE userid =%s;",
+                        (userid,),
                     )
-                    all_comments = cur.fetchall()
-                    if all_comments:
-                        comments = [Comment(**comment) for comment in all_comments]
-                        return comments
+                    result = cur.fetchone()
+                    total_count = result["count"] if result else 0
+
+                    page_count = ceil((total_count) / per_page)
+
+                    if page_number > page_count:
+                        return [], page_count, page_count
+                    
+                    cur.execute(
+                        """SELECT commentid FROM comments 
+                        WHERE userid =%s
+                        LIMIT %s OFFSET %s;
+                        """,
+                        (userid, per_page, offset),
+                    )
+                    
+                    commentIds = cur.fetchall()
+                    if commentIds:
+                        return commentIds
                     return None
                 except Exception as e:
                     raise e
                 finally:
                     cur.close()
                     conn.close()
+                    
     
     @staticmethod
-    def get_comment(userid, bookid):
+    def get_comment(commentid):
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:    
                 try:
                     cur.execute(
-                        "SELECT * FROM Comments WHERE userid =%s And bookid =%s;",
-                        (
-                            userid,
-                            bookid,
-                        ),
+                        """SELECT T1.*,T2.username,T2.avatar 
+                        FROM comments as T1 
+                        JOIN users as T2 ON T1.userid = T2.userid
+                        WHERE T1.commentid=%s;
+                        """,
+                        (commentid,), # no need for book title, we already have it
                     )
                     comment_data = cur.fetchone()
                     if comment_data:
-                        comment = Comment(**comment_data)
-                        return comment
+                        return comment_data
                     return None
                 except Exception as e:
                     raise e

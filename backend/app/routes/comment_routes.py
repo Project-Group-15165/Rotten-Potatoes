@@ -4,30 +4,6 @@ from app.models import Comment
 from app.services import CommentService
 
 bp = Blueprint("comment", __name__)
-@bp.route("/bookid/<bookid>", methods=["GET"])
-def book_comments(bookid):
-    try:
-        comments = CommentService.get_all_comments_of_book(bookid=bookid)
-    except Exception as e:
-        return jsonify({"message": str(e)}), 500
-
-    if comments:
-        return jsonify(comments), 201
-    else:
-        return jsonify({"message": "no comments"}), 404
-
-@bp.route("/userid/<userid>", methods=["GET"])
-def user_comments(userid):
-    try:
-        comments = CommentService.get_all_comments_of_user(userid=userid)
-    except Exception as e:
-        return jsonify({"message": str(e)}), 500
-
-    if comments:
-        return jsonify(comments), 201
-    else:
-        return jsonify({"message": "no comments"}), 404
-    
     
 @bp.route("/<bookid>/add", methods=["POST"])
 @jwt_required
@@ -81,3 +57,44 @@ def delete_comment(identity, bookid):
         return jsonify({"message": "error can't delete comment " + str(e)}), 500
 
     return jsonify({"message": "success"}), 200
+
+@bp.route("/bookid/<bookid>/getallcomments", methods=["GET"])
+def book_comments(bookid):
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    try:
+        reviews = CommentService.get_all_comments_of_book(bookid=bookid,per_page=per_page, page_number=page)
+    except Exception as e:
+        return jsonify({"message": "error can't get comments" + str(e)}), 500
+
+    if reviews:
+        return jsonify(reviews), 201
+    else:
+        return jsonify({"message": "no comments"}), 404
+    
+@bp.route("/userid/<userid>/getallcomments", methods=["GET"])
+def user_comments(userid):
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    try:
+        comments = CommentService.get_all_comments_of_user(userid=userid, page=page,per_page=per_page )
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+    if comments:
+        return jsonify(comments), 201
+    else:
+        return jsonify({"message": "no comments"}), 404
+    
+    
+@bp.route("/get/<commentid>", methods=["GET"])
+def getcomment_by_id(commentid):
+    try:
+        book = CommentService.get_comment(commentid)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+    if book:
+        return jsonify(book), 201
+    else:
+        return jsonify({"message": "no such comment"}), 404
+    

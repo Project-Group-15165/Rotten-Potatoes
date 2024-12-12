@@ -2,10 +2,11 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.utils.db import get_db_connection
 from app.models import Book
+from math import ceil
 
 class BookService:
     @staticmethod
-    def add_book(book : Book):
+    def add_book(book : Book):              # we need to add genres tooo!!!!
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -29,9 +30,25 @@ class BookService:
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """SELECT * FROM books 
-                WHERE title = %s
-                """   
+                query = """
+                    SELECT 
+                        T1.title, 
+                        T1.cover, 
+                        T1.description, 
+                        T1.format, 
+                        T1.goodreads_rating, 
+                        ARRAY_AGG(DISTINCT T3.name) AS genres, 
+                        ARRAY_AGG(DISTINCT T5.name) AS authors, 
+                        T1.page_numbers, 
+                        T1.pub_date
+                    FROM books AS T1
+                    JOIN bookgenres AS T2 ON T1.bookID = T2.bookID
+                    JOIN genres AS T3 ON T2.genreid = T3.genreid
+                    JOIN bookauthors AS T4 ON T1.bookID = T4.bookID
+                    JOIN authors AS T5 ON T4.authorid = T5.authorid
+                    WHERE T1.title = %s
+                    GROUP BY T1.bookID 
+                """ 
                 try:      
                     cur.execute(query, (title,))
                     book = cur.fetchone() #only one book
@@ -86,34 +103,66 @@ class BookService:
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """SELECT * FROM books 
-                WHERE bookID = %s
+                query = """
+                    SELECT 
+                        T1.title, 
+                        T1.cover, 
+                        T1.description, 
+                        T1.format, 
+                        T1.goodreads_rating, 
+                        ARRAY_AGG(DISTINCT T3.name) AS genres, 
+                        ARRAY_AGG(DISTINCT T5.name) AS authors, 
+                        T1.page_numbers, 
+                        T1.pub_date
+                    FROM books AS T1
+                    JOIN bookgenres AS T2 ON T1.bookID = T2.bookID
+                    JOIN genres AS T3 ON T2.genreid = T3.genreid
+                    JOIN bookauthors AS T4 ON T1.bookID = T4.bookID
+                    JOIN authors AS T5 ON T4.authorid = T5.authorid
+                    WHERE T1.bookID = %s
+                    GROUP BY T1.bookID 
                 """   
+
                 try:      
                     cur.execute(query, (bookid,))
-                    book_data = cur.fetchone() #only one book
+                    book_data = cur.fetchone()  # only one book
                     if book_data:
-                        book = Book(**book_data)
-                        return book
+                        return book_data
                     return None
                 except Exception as e:
                     raise e 
                 finally:
                     cur.close()
                     conn.close()
+
                     
     @staticmethod
-    def get_all_books():                            # this may be changed later to add limit and may be add offset when we change pages 1-> 2-> 3..
+    def get_all_books(page_number, per_page):                         
+        offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """SELECT * FROM books """   
+                query = """SELECT count(*) FROM books """   
                 try:      
                     cur.execute(query)
-                    books = cur.fetchall()
-                    if books:
-                        Books = [Book(**book) for book in books]
-                        return Books
+                    result = cur.fetchone()
+                    total_count = result["count"] if result else 0
+
+                    page_count = ceil((total_count) / per_page)
+
+                    if page_number > page_count:
+                        return [], page_count, page_count
+                    
+                    cur.execute(
+                        """SELECT bookid FROM books 
+                        LIMIT %s OFFSET %s;
+                        """,
+                        (per_page, offset),
+                    )
+                       
+                    bookIds = cur.fetchall()
+                    if bookIds:
+                        return bookIds
                     return None
                 except Exception as e:
                     raise e 
@@ -140,7 +189,6 @@ class BookService:
                 finally:
                     cur.close()
                     conn.close()
-        
         
        
     

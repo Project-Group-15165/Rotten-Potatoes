@@ -88,7 +88,7 @@ def get_book_by_id(bookid):
         return jsonify(book), 201
     else:
         return jsonify({"message": "no such book"}), 404
-    
+   
 @bp.route("/get/<bookid>", methods=["GET"])
 def get_bookCard_by_id(bookid):
     try:
@@ -99,3 +99,18 @@ def get_bookCard_by_id(bookid):
         return jsonify(book), 201
     else:
         return jsonify({"message": "no such book"}), 404
+    
+@bp.route("/getallbooks", methods=["GET"])
+def all_books():
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    try:
+        Booksids = BookService.get_all_books(page_number=page, per_page=per_page)
+    except Exception as e:
+        return jsonify({"message": "error can't get books" + str(e)}), 500
+
+    if Booksids:
+        return jsonify(Booksids), 201
+    else:
+        return jsonify({"message": "no reviews"}), 404
+    
