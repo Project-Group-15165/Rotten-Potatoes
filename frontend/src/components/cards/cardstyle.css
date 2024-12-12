@@ -1,0 +1,69 @@
+.card {
+    position: relative;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0px 4px 6px rgba(179, 177, 177, 0.1);
+    margin: 0.5rem;
+    transition: transform 0.3s ease-in-out;
+    width: 100%; /* Ensure it adapts for responsive layout */
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-img {
+    object-fit: cover;
+    height: 300px;
+    width: 100%;
+    transition: opacity 0.3s ease-in-out; /* Smooth transition for hover effect */
+}
+
+.card-title-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #f3f2ecdc; /* Semi-transparent black background */
+    color: rgb(95, 93, 93);
+    text-align: center;
+    padding: 10px 0;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none; /* Prevent accidental interactions when hidden */
+}
+
+/* Desktop behavior */
+.card:hover .card-title-container {
+    opacity: 1; /* Show the title on hover */
+    pointer-events: auto;
+}
+
+/* Mobile behavior */
+.card:active .card-title-container,
+.card.show-title .card-title-container {
+    opacity: 1; /* Show the title when tapped */
+    pointer-events: auto;
+}
+
+/* Adjust title text */
+.card-title {
+    text-decoration: none;
+    color: white; 
+    font-weight: bold;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Force single-line text */
+}
+
+@media (min-width: 576px) {
+    .card-title {
+        white-space: normal; /* Allow wrapping on larger screens */
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Limit to 2 lines */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
