@@ -13,18 +13,16 @@ CREATE TABLE Users (
     last_logged_in TIMESTAMP NOT NULL
 );
 
-
-
-CREATE TABLE Progress(
+CREATE TABLE Progress (
+    progressID SERIAL PRIMARY KEY,
     userID INT,
     bookID INT,
-    reading_status VARCHAR(20),
+    reading_status VARCHAR(20) CHECK (reading_status IN ('to_read', 'in_progress', 'completed')),
     pages_read INT DEFAULT 0,
     started_reading DATE,
     finished_reading DATE,
     FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
-    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
-    PRIMARY KEY (userID, bookID)
+    FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE
 );
 
 CREATE TABLE Reviews(

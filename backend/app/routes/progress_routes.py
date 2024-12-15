@@ -5,9 +5,7 @@ from app.services import ProgressService
 
 bp = Blueprint("progress", __name__)
 
-#restricting input can be done in frontend, discuss
 #pages read must be an integer between 0-num of pages
-#reading status must have two values, read, reading -> changing create sql, discuss
 
 @bp.route("/all", methods=["GET"])
 @jwt_required
@@ -31,8 +29,8 @@ def get_progress(identity, bookid):
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
-#add get book by id, to avoid adding books that dont exist
 #check if data is valid for all parameters
+#drop down menu for reading status, there are three of them
 @bp.route("/<bookid>/add", methods=["POST"])
 @jwt_required
 def add_progress(identity, bookid):

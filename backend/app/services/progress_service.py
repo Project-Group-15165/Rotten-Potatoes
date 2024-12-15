@@ -65,7 +65,10 @@ class ProgressService:
                     progress.finished_reading,
                 ),
             )
+            cursor.execute("RETURNING progressID;")
+            inserted_id = cursor.fetchone()['progressID']
             conn.commit()
+            return inserted_id
         except Exception as e:
             conn.rollback()
             raise e
@@ -93,7 +96,10 @@ class ProgressService:
                     progress.bookid,
                 ),
             )
+            cursor.execute("RETURNING progressID;")
+            inserted_id = cursor.fetchone()['progressID']
             conn.commit()
+            return inserted_id
         except Exception as e:
             conn.rollback()
             raise e
