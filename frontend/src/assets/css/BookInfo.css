@@ -1,0 +1,109 @@
+/* BookInfo.css */
+.book-card {
+    transition: transform 0.3s ease-in-out;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin: 2rem 0;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.book-header {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #e9ecef;
+    padding: 1.5rem;
+}
+
+.book-title {
+    font-family: 'Georgia', serif;
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.book-image-container {
+    padding: 1.5rem;
+}
+
+.book-image {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.book-image:hover {
+    transform: scale(1.02);
+}
+
+.book-details {
+    padding: 1.5rem;
+}
+
+.book-info {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #495057;
+}
+
+.book-info span {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.book-footer {
+    background-color: #f8f9fa;
+    border-top: 2px solid #e9ecef;
+    padding: 1.5rem;
+}
+
+.description-title {
+    font-family: 'Georgia', serif;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.book-description {
+    color: #495057;
+    line-height: 1.6;
+    font-size: 1.1rem;
+    text-align: justify;
+}
+
+@media (max-width: 768px) {
+    .book-image-container {
+        padding: 1rem;
+    }
+    
+    .book-details {
+        padding: 1rem;
+    }
+    
+    .book-info {
+        font-size: 1rem;
+    }
+    
+    .book-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* BookInfo.css */
+.read-more-link {
+    color: #007bff;
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 5px;
+}
+
+.read-more-link:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+.book-description {
+    margin-bottom: 0;
+}
