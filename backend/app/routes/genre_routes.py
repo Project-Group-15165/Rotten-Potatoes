@@ -2,6 +2,9 @@ from flask import Blueprint, request, jsonify, current_app
 from app.utils.auth import jwt_required
 from app.models import Genre
 from app.services import GenreService
+from app.models import Book
+#from app.services import BookService
+
 
 bp = Blueprint("genre", __name__)
 
@@ -61,3 +64,34 @@ def delete_review(identity,genreid):
         return jsonify({"message": "error can't delete genre"}), 500
 
     return jsonify({"message": "success: deleted genre"}), 200
+
+@bp.route("/getallgenres", methods=["GET"])
+def all_genres():
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    try:
+        Genreids = GenreService.get_all_genres(page_number=page, per_page=per_page)
+    except Exception as e:
+        return jsonify({"message": "error can't get genres" + str(e)}), 500
+
+    if Genreids:
+        return jsonify(Genreids), 201
+    else:
+        return jsonify({"message": "no genres"}), 404
+    
+@bp.route("/genreid/<genreid>", methods=["GET"])
+def book_by_genreid(genreid):
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    try:
+        books, total_count, page_count = GenreService.get_all_books_of_genre(
+            genreid=genreid, per_page=per_page, page_number=page
+        )
+        print(books)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+    if books:
+        return jsonify(books, total_count, page_count), 201
+    else:
+        return jsonify({"message": "no books"}), 404
+

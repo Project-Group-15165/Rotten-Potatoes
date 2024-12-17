@@ -94,3 +94,42 @@ def get_authorcard(authorid):
         return jsonify(author), 200
     else:
         return jsonify({"message": "Author not found"}), 404
+
+@bp.route("/getallauthors", methods=["GET"])
+def all_authors():
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    try:
+        Authorids = AuthorService.get_all_authors(page_number=page, per_page=per_page)
+    except Exception as e:
+        return jsonify({"message": "error can't get authors" + str(e)}), 500
+
+    if Authorids:
+        return jsonify(Authorids), 201
+    else:
+        return jsonify({"message": "no authors"}), 404
+    
+@bp.route("/authorid/<authorid>", methods=["GET"])
+def book_by_authorid(authorid): # author + 4books
+    try:
+        author_info = AuthorService.get_author(authorid=authorid)
+        if not author_info:
+            return jsonify({"message": "Author not found"}), 404       
+        
+        books = AuthorService.get_four_books_of_author(authorid=authorid)
+        if not books:
+            return jsonify({"message": "no books"}), 404
+        print(books)
+
+        response = {
+            "author": author_info,  
+            "books": books          
+        }
+        return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+        
+
+
