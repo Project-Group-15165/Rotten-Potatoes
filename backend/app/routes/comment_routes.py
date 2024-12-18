@@ -29,9 +29,8 @@ def new_comments(identity, bookid):
 
 @bp.route("/<bookid>/update", methods=["PUT"]) #should i add the comment id here
 @jwt_required
-def update_comment(identity, bookid):
-    userid=identity["userid"]
-    comment = CommentService.get_comment(userid=userid, bookid=bookid)
+def update_comment(identity, commentid):
+    comment = CommentService.get_comment(commentid=commentid)
     data = request.get_json()
     comment.content = data.get("content")
     comment.soiler = data.get("spoiler") # How to update time !
@@ -46,13 +45,12 @@ def update_comment(identity, bookid):
 
 @bp.route("/<bookid>/delete", methods=["DELETE"])
 @jwt_required
-def delete_comment(identity, bookid):
-    userid = identity["userid"]
-    comment = CommentService.get_comment(userid=userid, bookid=bookid)
+def delete_comment(identity, commentid):
+    comment = CommentService.get_comment(commentid=commentid)
     if not comment:
         return jsonify({"message": "no comment to delete"}), 404
     try:
-        CommentService.delete_comment(comment.commentid)
+        CommentService.delete_comment(commentid)
     except Exception as e:
         return jsonify({"message": "error can't delete comment " + str(e)}), 500
 
