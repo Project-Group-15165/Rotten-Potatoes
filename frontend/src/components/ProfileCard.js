@@ -1,14 +1,23 @@
 import React from "react";
 import { Card, CardTitle, CardBody, CardText, CardFooter, Button } from "reactstrap";
 import { Link } from "react-router-dom";
+import defaultImage from '../assets/images/avatars/1.png'
+
 
 function ProfileCard(props) {
+
   const user = props.user
+  let profileImage;
+  try {
+    profileImage = require(`../assets/images/avatars/${user.avatar}.png`);
+  } catch (error) {
+    profileImage = defaultImage;
+  }
   return (
     <Card className="my-3 mx-auto" style={{ maxWidth: '18rem' }}>
       <div className="text-center mt-3">
         <img 
-          src={require(`../assets/images/avatars/${user.avatar}.png`)} 
+          src={profileImage} 
           className="rounded-circle border" 
           style={{ width: '6rem' }}
           alt="User"

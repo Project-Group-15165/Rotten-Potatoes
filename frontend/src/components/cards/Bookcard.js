@@ -40,7 +40,7 @@ const BookCard = (props) => {
 
     return (
         <Card
-            className={`card ${isMobile ? 'always-show-title' : ''}`} // Add a class for mobile
+            className={`card book-card mx-auto my-3 ${isMobile ? 'always-show-title' : ''}`} // Add a class for mobile
         >
             <CardImg src={book.cover} alt={book.title} className="card-img" />
             <div className="card-title-container">

@@ -231,13 +231,31 @@ function Register() {
                   </InputGroup>
                 </FormGroup>
                 <div className="text-muted font-italic">
-                  <small>
-                    password strength:{" "}
-                    <span className="text-success font-weight-700">
-                      strong
-                    </span>
-                  </small>
+                  <strong>
+                    Before you join us choose the vegetabe that best represents you
+                  </strong>
                 </div>
+                <Row>
+                  <Col lg={4} md={4} s ={4} xs={4}>
+                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
+                  </Col>
+                  <Col lg={4} md={4} s ={4} xs={4}>
+                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
+                  </Col>
+                  <Col lg={4} md={4} s ={4} xs={4}>
+                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
+                  </Col>
+                  <Col lg={4} md={4} s ={4} xs={4}>
+                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
+                  </Col>
+                  <Col lg={4} md={4} s ={4} xs={4}>
+                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
+                  </Col>
+                  <Col lg={4} md={4} s ={4} xs={4}>
+                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
+                  </Col>
+                  
+                </Row>
                 <div className="text-center">
                   <Button
                     className="mt-4"

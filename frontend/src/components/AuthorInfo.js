@@ -1,12 +1,57 @@
 // AuthorInfo.js
-import React, { useState } from 'react';
-import { Card, CardBody, CardTitle, CardText, CardImg, Row, Col, CardHeader, CardFooter, Button } from 'reactstrap';
+import React, { useState, useEffect } from 'react';
+import { Card, CardBody, CardTitle, CardText, CardImg, Row, Col,Container, CardHeader, CardFooter, Button } from 'reactstrap';
 import '../assets/css/AuthorInfo.css';
+import { publicApi} from '../services/api';
+import Bookcard from '../components/cards/Bookcard'
 
-const AuthorInfo = () => {
+const AuthorInfo = (props) => {
+    const authorid = props.authorid;
+    const [author, setAuthor]= useState(null);
+    const [books, setBooks] = useState(null)
     const [isExpanded, setIsExpanded] = useState(false);
-    const fullBio = "J.K. Rowling is a British author and philanthropist. She wrote Harry Potter, which gained worldwide attention, won multiple awards, and sold more than 500 million copies, becoming the best-selling book series in history. Rowling has lived a 'rags to riches' life in which she progressed from living on benefits to being named the world's first billionaire author by Forbes. She lost her billionaire status after giving away much of her earnings to charity but remains one of the wealthiest people in the world.";
+    const [fullBio,setFullBio] = useState('')
     const wordLimit = 20;
+
+    const replaceNullValues = (obj) => {
+        const newObj = {};
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                if (obj[key] === null) {
+                newObj[key] = "N/A";
+                } else if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+                newObj[key] = replaceNullValues(obj[key]);
+                } else {
+                newObj[key] = obj[key];
+                }
+            }
+        }
+        return newObj;
+    };
+
+    useEffect(() => {
+        const fetchauthor = async (authorid) => {
+            try {
+                const response = await publicApi.get(`/author/authorid/${authorid}`);
+                setAuthor(response.data.author); 
+                setBooks(response.data.books)
+                if (response.data.author.summary === null){
+                    setFullBio("N/A")
+                }
+                else{
+                    setFullBio(response.data.author.summary)
+                }
+            } catch (error) {
+                console.error('Failed to fetch author', error);
+            }
+        };
+
+        fetchauthor(authorid)
+    },[authorid]);
+
+    if(!author && !books){
+        return (<h1>Loading</h1>)
+    }
 
     const truncateText = (text, limit) => {
         const words = text.split(' ');
@@ -17,25 +62,26 @@ const AuthorInfo = () => {
     };
 
     return (
+        <Container>
         <Row className="no-gutters">
             <Col lg={8} md={10} xs={10} className='mx-auto'>
-                <Card className="author-card">
+                <Card className="authorcard">
                     <Row className="no-gutters">
                         <Col md={4} xs={12} className='author-image-container'>
                             <CardImg
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/J._K._Rowling_2010.jpg/330px-J._K._Rowling_2010.jpg"
+                                src={author.image}
                                 alt="Author portrait"
                                 className="author-image"
                             />
                         </Col>
                         <Col md={8} xs={12} className='author-details'>
                             <CardBody>
-                                <CardText tag = {'h3'} className='author-title mb-3'>J.K. Rowling</CardText>
-                                <CardText className="author-info my-auto"> British author and philanthropist (born 1965)</CardText>
+                                <CardText tag = {'h3'} className='author-title mb-3'>{author.name}</CardText>
+                                <CardText className="author-info my-auto">{author.description}</CardText>
                                 <Button 
                                     color="primary" 
                                     className="wiki-link mt-3"
-                                    onClick={() => window.open('https://en.wikipedia.org/wiki/J._K._Rowling', '_blank')}
+                                    onClick={() => window.open(`${author.wiki_link}`, '_blank')}
                                 >
                                     Wikipedia Page
                                 </Button>
@@ -59,6 +105,12 @@ const AuthorInfo = () => {
                 </Card>
             </Col>
         </Row>
+        <Row>
+            {books.map((book)=>{
+                return <Bookcard bookid={book.bookid}/>
+            })}
+        </Row>
+        </Container>
     );
 };
 

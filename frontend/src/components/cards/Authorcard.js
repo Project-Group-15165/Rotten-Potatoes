@@ -25,7 +25,7 @@ const AuthorCard = (props) => {
     }
 
     return (
-        <Card className="card">
+        <Card className="card author-card mx-auto my-3">
           <CardImg src={author.image} alt={author.name} className="card-img" />
           <div className="card-title-container">
             <Link to={`/author/${author.authorid}`}>{author.name}</Link>
