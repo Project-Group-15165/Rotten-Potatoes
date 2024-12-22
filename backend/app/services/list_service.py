@@ -37,6 +37,7 @@ class ListService:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             # do i need book name?
+            # return book card info
             cursor.execute(
                 """
                 SELECT bookid, added_on 

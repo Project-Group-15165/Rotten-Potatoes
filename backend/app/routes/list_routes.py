@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify, current_app
 from app.utils.auth import jwt_required
 from app.models import List
 from app.services import ListService
+from app.models import Progress
+from app.services import ProgressService
 
 bp = Blueprint("list", __name__)
 
@@ -55,7 +57,15 @@ def add_list_item(identity, listid):
         return jsonify({"message": "Book ID is required"}), 400
     try:
         ListService.add_list_item(bookid=bookid, listid=listid)
-        return jsonify({"message": "Book added to the list"}), 201
+        jsonify({"message": "Book added to the list"}), 201
+
+        default_progress = Progress(
+            userid=identity["userid"],
+            bookid=bookid,
+            reading_status="to_read",
+            pages_read=0,)
+        ProgressService.add_progress(default_progress)
+        return jsonify({"message": "Book added to the list and progress created"}), 201
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
