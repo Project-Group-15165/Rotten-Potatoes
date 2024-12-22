@@ -19,6 +19,72 @@
     transition: opacity 0.3s ease-in-out; /* Smooth transition for hover effect */
 }
 
+/* BookCard specific styles */
+.book-card {
+    max-width: 200px; /* Adjust the max-width as needed */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.book-card-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3; /* Aspect ratio for book cover */
+    object-fit: cover;
+}
+
+.book-card-title-container {
+    padding: 10px;
+    text-align: center;
+    background-color: #fff;
+    width: 100%;
+}
+
+.book-card-title {
+    font-size: 1rem;
+    color: #333;
+    text-decoration: none;
+}
+
+.book-card-title:hover {
+    text-decoration: underline;
+}
+
+/* AuthorCard specific styles */
+.author-card {
+    max-width: 200px; /* Adjust the max-width as needed */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.author-card-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1; /* Aspect ratio for author image */
+    object-fit: cover;
+}
+
+.author-card-title-container {
+    padding: 10px;
+    text-align: center;
+    background-color: #fff;
+    width: 100%;
+}
+
+.author-card-title {
+    font-size: 1rem;
+    color: #333;
+    text-decoration: none;
+}
+
+.author-card-title:hover {
+    text-decoration: underline;
+}
+
 .card-title-container {
     position: absolute;
     bottom: 0;

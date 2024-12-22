@@ -5,6 +5,7 @@ from app.services import AuthorService
 
 bp = Blueprint("author", __name__)
 
+
 @bp.route("/<authorid>", methods=["GET"])
 def get_author(authorid):
     try:
@@ -18,7 +19,7 @@ def get_author(authorid):
         return jsonify({"message": "Author not found"}), 404
 
 
-@bp.route("/add", methods=["POST"])   
+@bp.route("/add", methods=["POST"])
 @jwt_required
 def add_author(identity):
     data = request.get_json()
@@ -83,6 +84,7 @@ def delete_author(identity, authorid):
 
     return jsonify({"message": "Author deleted successfully"}), 200
 
+
 @bp.route("/get/<authorid>", methods=["GET"])
 def get_authorcard(authorid):
     try:
@@ -95,12 +97,16 @@ def get_authorcard(authorid):
     else:
         return jsonify({"message": "Author not found"}), 404
 
+
 @bp.route("/getallauthors", methods=["GET"])
 def all_authors():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
+    input_word = request.args.get("input_word", type=str)
     try:
-        Authorids = AuthorService.get_all_authors(page_number=page, per_page=per_page)
+        Authorids = AuthorService.get_all_authors(
+            page_number=page, per_page=per_page, input_word=input_word
+        )
     except Exception as e:
         return jsonify({"message": "error can't get authors" + str(e)}), 500
 
@@ -108,28 +114,22 @@ def all_authors():
         return jsonify(Authorids), 201
     else:
         return jsonify({"message": "no authors"}), 404
-    
+
+
 @bp.route("/authorid/<authorid>", methods=["GET"])
-def book_by_authorid(authorid): # author + 4books
+def book_by_authorid(authorid):  # author + 4books
     try:
         author_info = AuthorService.get_author(authorid=authorid)
         if not author_info:
-            return jsonify({"message": "Author not found"}), 404       
-        
+            return jsonify({"message": "Author not found"}), 404
+
         books = AuthorService.get_four_books_of_author(authorid=authorid)
         if not books:
             return jsonify({"message": "no books"}), 404
         print(books)
 
-        response = {
-            "author": author_info,  
-            "books": books          
-        }
+        response = {"author": author_info, "books": books}
         return jsonify(response), 200
 
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-
-        
-
-

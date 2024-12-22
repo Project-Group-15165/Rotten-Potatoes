@@ -4,6 +4,7 @@ import { useEffect, useState, useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import { publicApi } from '../services/api';
 import ReviewList from '../components/ReviewList';
+import useScrollToTop from "../services/useScrollToTop";
 
 function ProfilePage() {
     const {user} = useContext(AuthContext);
@@ -11,7 +12,7 @@ function ProfilePage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const perPage = 5; // Number of reviews per page
-
+    useScrollToTop();
 
   useEffect(() => {
     const fetchReviews = async (userid, page, perPage) => {

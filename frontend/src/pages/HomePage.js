@@ -4,7 +4,8 @@ import {
     Container,
   } from "reactstrap";
 
-import Tabs from './../components/Tabs'
+import BookCard from '../components/cards/Bookcard'
+import AuthorCard from '../components/cards/Authorcard'
 
 function HomePage() {
     return (
@@ -16,8 +17,21 @@ function HomePage() {
                     <div class="section-header align-center">
                         <h2 class="section-title">Popular Books</h2>
                     </div>
-                    <Tabs />
                 </Col>                
+            </Row>
+            <Row>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <BookCard bookid={1}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <BookCard bookid={2}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <BookCard bookid={3}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <BookCard bookid={4}/>
+                </Col>
             </Row>
         </Container>
         </section>
@@ -28,8 +42,21 @@ function HomePage() {
                     <div class="section-header align-center">
                         <h2 class="section-title">Popular Authors</h2>
                     </div>
-                    <Tabs />
                 </Col>                
+            </Row>
+            <Row>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <AuthorCard authorid={1}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <AuthorCard authorid={2}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <AuthorCard authorid={3}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <AuthorCard authorid={4}/>
+                </Col>
             </Row>
         </Container>
         </section>
@@ -40,7 +67,6 @@ function HomePage() {
                     <div class="section-header align-center">
                         <h2 class="section-title">Popular Genres</h2>
                     </div>
-                    <Tabs />
                 </Col>                
             </Row>
         </Container>

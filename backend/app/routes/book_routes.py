@@ -15,10 +15,9 @@ def Book_information(booktitle):
         return jsonify(book), 201
     else:
         return jsonify({"message": "no such book"}), 404
-    
 
 
-@bp.route("/add", methods=["POST"])     
+@bp.route("/add", methods=["POST"])
 @jwt_required
 def add_book(identity):
     data = request.get_json()
@@ -29,8 +28,15 @@ def add_book(identity):
     page_numbers = data.get("page_numbers")
     pub_date = data.get("pub_date")
     goodreads_rating = data.get("goodreads_rating")
-    book = Book(title=title, cover=cover,description=description, format=format,
-                page_numbers=page_numbers, pub_date=pub_date,goodreads_rating=goodreads_rating)
+    book = Book(
+        title=title,
+        cover=cover,
+        description=description,
+        format=format,
+        page_numbers=page_numbers,
+        pub_date=pub_date,
+        goodreads_rating=goodreads_rating,
+    )
     try:
         BookService.add_book(book=book)
     except Exception as e:
@@ -65,9 +71,10 @@ def update_book(identity, bookid):
 
     return jsonify({"message": "success"}), 200
 
+
 @bp.route("/<bookid>/delete", methods=["DELETE"])
 @jwt_required
-def delete_book(identity,bookid):
+def delete_book(identity, bookid):
     book = BookService.get_book_by_id(bookid)
     if not book:
         return jsonify({"message": "no book to delete"}), 404
@@ -76,8 +83,9 @@ def delete_book(identity,bookid):
     except Exception as e:
         return jsonify({"message": "error can't delete book" + str(e)}), 500
 
-    return jsonify({"message": "success"}), 200 
-    
+    return jsonify({"message": "success"}), 200
+
+
 @bp.route("/bookid/<bookid>", methods=["GET"])
 def get_book_by_id(bookid):
     try:
@@ -88,7 +96,8 @@ def get_book_by_id(bookid):
         return jsonify(book), 201
     else:
         return jsonify({"message": "no such book"}), 404
-   
+
+
 @bp.route("/get/<bookid>", methods=["GET"])
 def get_bookCard_by_id(bookid):
     try:
@@ -99,13 +108,17 @@ def get_bookCard_by_id(bookid):
         return jsonify(book), 201
     else:
         return jsonify({"message": "no such book"}), 404
-    
+
+
 @bp.route("/getallbooks", methods=["GET"])
 def all_books():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
+    input_word = request.args.get("input_word", type=str)
     try:
-        Booksids = BookService.get_all_books(page_number=page, per_page=per_page)
+        Booksids = BookService.get_all_books(
+            page_number=page, per_page=per_page, input_word=input_word
+        )
     except Exception as e:
         return jsonify({"message": "error can't get books" + str(e)}), 500
 
@@ -113,4 +126,3 @@ def all_books():
         return jsonify(Booksids), 201
     else:
         return jsonify({"message": "no reviews"}), 404
-    

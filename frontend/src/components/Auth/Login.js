@@ -44,7 +44,7 @@ function Login() {
         localStorage.setItem('token', access_token); // Store the token in local storage
         const current_user = getCurrentUser();
         setUser(current_user);
-        navigate('/')
+        navigate('/profile')
       } else {
         console.error('Token is undefined');
       }

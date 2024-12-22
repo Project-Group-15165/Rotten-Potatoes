@@ -87,7 +87,7 @@ class AuthorService:
             conn.close()
 
     @staticmethod
-    def delete_author(authorid : int):
+    def delete_author(authorid: int):
         conn = get_db_connection()
         cursor = conn.cursor()
         prompt = """DELETE FROM authors WHERE authorid = %s;"""
@@ -123,34 +123,38 @@ class AuthorService:
             conn.close()
 
     @staticmethod
-    def get_all_authors(page_number, per_page):  
+    def get_all_authors(page_number, per_page, input_word):
         offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """SELECT count(*) FROM authors """
-                try:      
-                    cur.execute(query)
+                query = """SELECT count(*) FROM authors WHERE LOWER(name) LIKE %s"""
+                try:
+                    cur.execute(
+                        query,
+                        (("%" + input_word + "%"),),
+                    )
                     result = cur.fetchone()
                     total_count = result["count"] if result else 0
 
                     page_count = ceil((total_count) / per_page)
 
                     if page_number > page_count:
-                        return [], page_count, page_count
-                    
+                        return [], page_count
+
                     cur.execute(
                         """SELECT authorid FROM authors 
+                        WHERE LOWER(name) LIKE %s
                         LIMIT %s OFFSET %s;
                         """,
-                        (per_page, offset),
+                        (("%" + input_word + "%"), per_page, offset),
                     )
                     authorIds = cur.fetchall()
                     if authorIds:
-                        return authorIds
+                        return authorIds, page_count
                     return None
                 except Exception as e:
-                    raise e 
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
@@ -160,7 +164,7 @@ class AuthorService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
-            cursor.execute( #is it better to show highest rated books?
+            cursor.execute(  # is it better to show highest rated books?
                 """
                 SELECT b.bookid, b.title, b.cover, b.description, b.format, b.page_numbers, b.pub_date, b.goodreads_rating   
                 FROM books b INNER JOIN bookauthors ba 
@@ -182,5 +186,3 @@ class AuthorService:
         finally:
             cursor.close()
             conn.close()
-
-

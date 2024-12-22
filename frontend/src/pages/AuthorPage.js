@@ -1,7 +1,9 @@
 import AuthorInfo from "../components/AuthorInfo";
+import { useParams } from 'react-router-dom';
 
 function AuthorPage() {
-    return (<AuthorInfo />)
+    const {authorid} = useParams()
+    return (<AuthorInfo authorid={authorid}/>)
 }
 
 export default AuthorPage;
