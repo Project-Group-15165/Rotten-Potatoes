@@ -236,8 +236,8 @@ function Register() {
                   </strong>
                 </div>
                 <Row>
-                  <Col lg={4} md={4} s ={4} xs={4}>
-                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
+                  <Col lg={4} md={4} s ={4} xs={4} >
+                    <a className="btn btn-light p-0 m-1 bg-white rounded-pill"><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
                   </Col>
                   <Col lg={4} md={4} s ={4} xs={4}>
                     <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>

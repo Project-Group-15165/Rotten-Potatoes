@@ -26,6 +26,7 @@ const ResponsiveCard = (props) => {
             try {
                 const response = await publicApi.get(`/book/bookid/${bookid}`);
                 setBook(response.data);
+                console.log(response.data)
                 setFullDescription(response.data.description);
             } catch (error) {
                 console.error('Failed to fetch book', error);
@@ -73,7 +74,7 @@ const ResponsiveCard = (props) => {
                                 <CardBody>
                                     <CardText className="book-info"><span>Author:</span> {book.authors[0]}</CardText>
                                     <CardText className="book-info"><span>Format:</span> {book.format}</CardText>
-                                    <CardText className="book-info"><span>Pages:</span> {book.pages}</CardText>
+                                    <CardText className="book-info"><span>Pages:</span> {book.page_numbers}</CardText>
                                     <CardText className="book-info"><span>Published on:</span> {book.pub_date}</CardText>
                                     <CardText className="book-info"><span>Goodreads rating:</span> {book.goodreads_rating}</CardText>
                                     <CardText className="book-info"><span>Potato rating:</span> 4.58</CardText>

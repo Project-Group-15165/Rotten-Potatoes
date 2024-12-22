@@ -18,6 +18,7 @@ import {
   Container,
   Row,
   Col,
+  Alert,
 } from "reactstrap";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,6 +27,7 @@ import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 function Login() {
   const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
   const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -46,9 +48,11 @@ function Login() {
         setUser(current_user);
         navigate('/profile')
       } else {
+        setError(true)
         console.error('Token is undefined');
       }
     } catch (error) {
+      setError(true)
       console.error('Login failed', error);
     }
   };
@@ -56,7 +60,7 @@ function Login() {
   return (
     <Container className="pt-lg-7">
       <Row className="justify-content-center">
-        <Col lg="5">
+        <Col lg="5" classname="p-0">
           <Card className="bg-secondary shadow border-0">
             <CardHeader className="bg-white pb-5">
               <div className="text-center mb-3">
@@ -65,6 +69,16 @@ function Login() {
               </div>
             </CardHeader>
             <CardBody className="px-lg-5 py-lg-5">
+            {error && (
+                <Alert color="danger">
+                  <span className="alert-inner--icon">
+                    <i className="ni ni-bell-55" />
+                  </span>
+                  <span className="alert-inner--text">
+                    Incorrect email or password
+                  </span>
+                </Alert>
+              )}
               <Form role="form">
                 <FormGroup>
                   <InputGroup className="input-group-alternative mb-3">
@@ -95,14 +109,6 @@ function Login() {
                     />
                   </InputGroup>
                 </FormGroup>
-                <div className="text-muted font-italic">
-                  <small>
-                    password strength:{" "}
-                    <span className="text-success font-weight-700">
-                      strong
-                    </span>
-                  </small>
-                </div>
                 <div className="text-center">
                   <Button
                     className="mt-4"
@@ -111,7 +117,7 @@ function Login() {
                     disabled={!getIsFormValid()}
                     onClick={handleSubmit}
                   >
-                    Create account
+                    Log In
                   </Button>
                 </div>
               </Form>

@@ -29,6 +29,10 @@
 }
 
 .book-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3; /* Aspect ratio for book cover */
+    object-fit: cover;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
