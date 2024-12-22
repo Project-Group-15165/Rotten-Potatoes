@@ -6,27 +6,37 @@ from math import ceil
 
 class BookService:
     @staticmethod
-    def add_book(book : Book):              # we need to add genres tooo!!!!
+    def add_book(book: Book):  # we need to add genres tooo!!!!
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = """INSERT INTO books( title, cover, description, format, page_numbers, pub_date, goodreads_rating)
                            VALUES ( %s, %s, %s, %s, %s, %s, %s )"""
-                           
-                try:      
-                    cur.execute(query, (book.title, book.cover, book.description, book.format, book.page_numbers, book.pub_date, book.goodreads_rating))
+
+                try:
+                    cur.execute(
+                        query,
+                        (
+                            book.title,
+                            book.cover,
+                            book.description,
+                            book.format,
+                            book.page_numbers,
+                            book.pub_date,
+                            book.goodreads_rating,
+                        ),
+                    )
                     conn.commit()
-                
-                
+
                 except Exception as e:
                     conn.rollback()
                     raise e
                 finally:
                     cur.close()
                     conn.close()
-                    
+
     @staticmethod
-    def get_book_by_title(title : str):
+    def get_book_by_title(title: str):
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -48,56 +58,68 @@ class BookService:
                     JOIN authors AS T5 ON T4.authorid = T5.authorid
                     WHERE T1.title = %s
                     GROUP BY T1.bookID 
-                """ 
-                try:      
+                """
+                try:
                     cur.execute(query, (title,))
-                    book = cur.fetchone() #only one book
+                    book = cur.fetchone()  # only one book
                     if book:
                         return book
                     return None
                 except Exception as e:
-                    raise e 
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
-                    
+
     @staticmethod
-    def delete_book(bookid : int):
+    def delete_book(bookid: int):
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = """
                     DELETE FROM books WHERE bookID = %s
-                """ 
-                try:      
+                """
+                try:
                     cur.execute(query, (bookid,))
-                    conn.commit() 
+                    conn.commit()
                 except Exception as e:
                     conn.rollback()
                     raise e
                 finally:
                     cur.close()
                     conn.close()
-    
+
     @staticmethod
-    def update_book(book : Book):
+    def update_book(book: Book):
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = """UPDATE books SET 
                     title=%s, cover=%s, description=%s, format=%s, page_numbers=%s, pub_date=%s, goodreads_rating=%s
                     WHERE bookID=%s
-                """ 
-                try:      
-                    cur.execute(query, ( book.title, book.cover, book.description, book.format, book.page_numbers, book.pub_date, book.goodreads_rating, book.bookid))
-                    conn.commit() 
+                """
+                try:
+                    cur.execute(
+                        query,
+                        (
+                            book.title,
+                            book.cover,
+                            book.description,
+                            book.format,
+                            book.page_numbers,
+                            book.pub_date,
+                            book.goodreads_rating,
+                            book.bookid,
+                        ),
+                    )
+                    conn.commit()
                 except Exception as e:
                     conn.rollback()
                     raise e
                 finally:
                     cur.close()
                     conn.close()
-                    
+
     @staticmethod
     def get_book_by_id(bookid: int):
         conn = get_db_connection()
@@ -121,55 +143,59 @@ class BookService:
                     JOIN authors AS T5 ON T4.authorid = T5.authorid
                     WHERE T1.bookID = %s
                     GROUP BY T1.bookID 
-                """   
+                """
 
-                try:      
+                try:
                     cur.execute(query, (bookid,))
                     book_data = cur.fetchone()  # only one book
                     if book_data:
                         return book_data
                     return None
                 except Exception as e:
-                    raise e 
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
 
-                    
     @staticmethod
-    def get_all_books(page_number, per_page):                         
+    def get_all_books(page_number, per_page, input_word):
         offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """SELECT count(*) FROM books """   
-                try:      
-                    cur.execute(query)
+                query = """SELECT count(*) FROM books WHERE LOWER(title) LIKE %s"""
+                try:
+                    cur.execute(
+                        query,
+                        ("%" + input_word + "%",),
+                    )
                     result = cur.fetchone()
                     total_count = result["count"] if result else 0
 
                     page_count = ceil((total_count) / per_page)
 
                     if page_number > page_count:
-                        return [], page_count, page_count
-                    
+                        return [], page_count
+
                     cur.execute(
                         """SELECT bookid FROM books 
+                        WHERE LOWER(title) LIKE %s
                         LIMIT %s OFFSET %s;
                         """,
-                        (per_page, offset),
+                        (("%" + input_word + "%"), per_page, offset),
                     )
-                       
+
                     bookIds = cur.fetchall()
                     if bookIds:
-                        return bookIds
+                        return bookIds, page_count
                     return None
                 except Exception as e:
-                    raise e 
+                    print(str(e))
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
-    
+
     @staticmethod
     def get_bookCard_by_id(bookid: int):
         conn = get_db_connection()
@@ -177,18 +203,15 @@ class BookService:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = """SELECT bookid, title, cover FROM books 
                 WHERE bookID = %s
-                """   
-                try:      
+                """
+                try:
                     cur.execute(query, (bookid,))
-                    book_data = cur.fetchone() #only one book
+                    book_data = cur.fetchone()  # only one book
                     if book_data:
                         return book_data
                     return None
                 except Exception as e:
-                    raise e 
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
-        
-       
-    
