@@ -161,8 +161,8 @@ class ReviewService:
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
@@ -187,8 +187,8 @@ class ReviewService:
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
@@ -210,8 +210,8 @@ class ReviewService:
             )
             conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()
