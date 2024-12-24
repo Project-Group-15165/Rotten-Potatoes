@@ -88,27 +88,31 @@ class GenreService:
             conn.close()
 
     @staticmethod
-    def get_all_genres(page_number, per_page):                         
+    def get_all_genres(page_number, per_page, input_word):                         
         offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """SELECT count(*) FROM genres """   
+                query = """SELECT count(*) FROM genres WHERE LOWER(name) LIKE %s"""
                 try:      
-                    cur.execute(query)
+                    cur.execute(
+                        query,
+                        ("%" + input_word + "%",),
+                    )
                     result = cur.fetchone()
                     total_count = result["count"] if result else 0
 
                     page_count = ceil((total_count) / per_page)
 
                     if page_number > page_count:
-                        return [], page_count, page_count
+                        return [], page_count
                     
                     cur.execute(
-                        """SELECT genreid FROM genres 
+                        """SELECT * FROM genres 
+                        WHERE LOWER(name) LIKE %s
                         LIMIT %s OFFSET %s;
                         """,
-                        (per_page, offset),
+                        (("%" + input_word + "%"), per_page, offset),
                     )
                        
                     genreIds = cur.fetchall()
@@ -147,7 +151,7 @@ class GenreService:
 
             cursor.execute(
                 """
-                SELECT b.bookid, b.title, b.cover, b.description, b.format, b.page_numbers, b.pub_date, b.goodreads_rating   
+                SELECT b.bookid  
                 FROM books b INNER JOIN bookgenres bg 
                 ON b.bookid = bg.bookid
                 WHERE bg.genreid = %s
@@ -158,8 +162,9 @@ class GenreService:
             books_data = cursor.fetchall()
             print(books_data)
             if books_data:
-                books = [Book(**book) for book in books_data]
-                return books, page_count, page_count
+                # books = [Book(**book) for book in books_data]
+                # return books, page_count, page_count
+                return books_data, page_count, page_count
             return [], page_count, page_count
         except Exception as e:
             raise e

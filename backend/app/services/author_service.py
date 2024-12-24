@@ -149,21 +149,41 @@ class AuthorService:
                         """,
                         (("%" + input_word + "%"), per_page, offset),
                     )
+
                     authorIds = cur.fetchall()
                     if authorIds:
                         return authorIds, page_count
                     return None
                 except Exception as e:
+                    print(str(e))
                     raise e
                 finally:
                     cur.close()
                     conn.close()
 
     @staticmethod
-    def get_four_books_of_author(authorid):
+    def get_all_books_of_author(authorid, page_number, per_page):
+        offset = (page_number - 1) * per_page
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
+            cursor.execute(
+                """
+                SELECT COUNT(*) AS total_count
+                FROM authors a
+                INNER JOIN bookauthors ba ON a.authorid = ba.authorid
+                WHERE ba.authorid = %s;
+                """,   
+                (authorid,),
+            )
+            result = cursor.fetchone()
+            total_count = result["total_count"] if result else 0
+
+            page_count = ceil((total_count) / per_page)
+
+            if page_number > page_count:
+                return [], page_count, page_count
+
             cursor.execute(  # is it better to show highest rated books?
                 """
                 SELECT b.bookid, b.title, b.cover, b.description, b.format, b.page_numbers, b.pub_date, b.goodreads_rating   
@@ -171,9 +191,9 @@ class AuthorService:
                 ON b.bookid = ba.bookid
                 WHERE ba.authorid = %s
                 --ORDER BY b.goodreads_rating DESC      
-                LIMIT 4;
+                LIMIT %s OFFSET %s;
                 """,
-                (authorid,),
+                (authorid,per_page, offset,),
             )
             books_data = cursor.fetchall()
             print(books_data)

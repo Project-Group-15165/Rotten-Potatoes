@@ -6,7 +6,7 @@ from app.services import AuthorService
 bp = Blueprint("author", __name__)
 
 
-@bp.route("/<authorid>", methods=["GET"])
+@bp.route("/getbyid/<authorid>", methods=["GET"])
 def get_author(authorid):
     try:
         author = AuthorService.get_author(authorid=authorid)
@@ -38,7 +38,7 @@ def add_author(identity):
     return jsonify({"message": "Author added successfully"}), 201
 
 
-@bp.route("/<authorid>/update", methods=["PUT"])
+@bp.route("/update/<authorid>", methods=["PUT"])
 @jwt_required
 def update_author(identity, authorid):
     author = AuthorService.get_author(authorid)
@@ -71,7 +71,7 @@ def update_author(identity, authorid):
     return jsonify({"message": "Author updated successfully"}), 200
 
 
-@bp.route("/<authorid>/delete", methods=["DELETE"])
+@bp.route("/delete/<authorid>", methods=["DELETE"])
 @jwt_required
 def delete_author(identity, authorid):
     author = AuthorService.get_author(authorid)
@@ -102,7 +102,7 @@ def get_authorcard(authorid):
 def all_authors():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
-    input_word = request.args.get("input_word", type=str)
+    input_word = request.args.get("input_word", "", type=str).lower()
     try:
         Authorids = AuthorService.get_all_authors(
             page_number=page, per_page=per_page, input_word=input_word
@@ -117,13 +117,13 @@ def all_authors():
 
 
 @bp.route("/authorid/<authorid>", methods=["GET"])
-def book_by_authorid(authorid):  # author + 4books
+def book_by_authorid(authorid):  # author + 4books -> => changed to author+ all books
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 4, type=int)
     try:
         author_info = AuthorService.get_author(authorid=authorid)
-        if not author_info:
-            return jsonify({"message": "Author not found"}), 404
-
-        books = AuthorService.get_four_books_of_author(authorid=authorid)
+        
+        books = AuthorService.get_all_books_of_author(authorid=authorid, per_page=per_page, page_number=page)
         if not books:
             return jsonify({"message": "no books"}), 404
         print(books)

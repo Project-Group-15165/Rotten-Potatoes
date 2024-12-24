@@ -9,7 +9,7 @@ from app.models import Book
 bp = Blueprint("genre", __name__)
 
 
-@bp.route("/<genreid>", methods=["GET"])
+@bp.route("/getbyid/<genreid>", methods=["GET"])
 def get_genre(genreid):
     try:
         genres = GenreService.get_genre_by_id(genreid=genreid)
@@ -38,7 +38,7 @@ def add_genre(identity):   #do i need jwt&identity when adding genre?
     return jsonify({"message": "success: genre added"}), 201
 
 
-@bp.route("/<genreid>/update", methods=["PUT"])
+@bp.route("/update/<genreid>", methods=["PUT"])
 @jwt_required
 def update_genre(identity,genreid):
     genre = GenreService.get_genre_by_id(genreid=genreid)
@@ -52,7 +52,7 @@ def update_genre(identity,genreid):
     return jsonify({"message": "success updated genre"}), 200
 
 
-@bp.route("/<genreid>/delete", methods=["DELETE"])
+@bp.route("/delete/<genreid>", methods=["DELETE"])
 @jwt_required
 def delete_review(identity,genreid):
     genre = GenreService.get_genre_by_id(genreid=genreid)
@@ -69,8 +69,9 @@ def delete_review(identity,genreid):
 def all_genres():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
+    input_word = request.args.get("input_word", "", type=str).lower()
     try:
-        Genreids = GenreService.get_all_genres(page_number=page, per_page=per_page)
+        Genreids = GenreService.get_all_genres(page_number=page, per_page=per_page, input_word=input_word)
     except Exception as e:
         return jsonify({"message": "error can't get genres" + str(e)}), 500
 
@@ -91,7 +92,8 @@ def book_by_genreid(genreid):
     except Exception as e:
         return jsonify({"message": str(e)}), 500
     if books:
-        return jsonify(books, total_count, page_count), 201
+        # return jsonify(books, total_count, page_count), 201
+        return jsonify(books), 201
     else:
         return jsonify({"message": "no books"}), 404
 
