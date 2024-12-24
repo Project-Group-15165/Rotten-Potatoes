@@ -19,6 +19,22 @@ def get_review(reviewid):
         return jsonify({"message": "no such review"}), 404
 
 
+@bp.route("/user_review/<bookid>", methods=["GET"])
+@jwt_required
+def get_user_review(identity, bookid):
+    try:
+        review_data = ReviewService.get_user_review(
+            bookid=bookid, userid=identity["userid"]
+        )
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+
+    if review_data:
+        return jsonify(review_data), 201
+    else:
+        return jsonify({"message": "no such review"}), 404
+
+
 @bp.route("/getall", methods=["GET"])
 def all_reviews():
     page = request.args.get("page", 1, type=int)

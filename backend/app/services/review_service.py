@@ -143,6 +143,34 @@ class ReviewService:
             conn.close()
 
     @staticmethod
+    def get_user_review(bookid, userid):
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        prompt = """SELECT T1.*,T2.username,T2.avatar,T3.title 
+        FROM reviews as T1 
+        JOIN users as T2 ON T1.userid = T2.userid
+        JOIN books as T3 ON T1.bookid = T3.bookid
+        WHERE T1.bookid=%s AND T2.userid=%s;
+        """
+        try:
+            cursor.execute(
+                prompt,
+                (
+                    bookid,
+                    userid,
+                ),
+            )
+            review_data = cursor.fetchone()
+            if review_data:
+                return review_data
+            return None
+        except Exception as e:
+            raise e
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
     def add_review(review: Review):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
