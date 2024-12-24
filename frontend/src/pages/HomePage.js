@@ -6,6 +6,7 @@ import {
 
 import BookCard from '../components/cards/Bookcard'
 import AuthorCard from '../components/cards/Authorcard'
+import GenreCard from '../components/cards/genrecard'
 
 function HomePage() {
     return (
@@ -68,6 +69,20 @@ function HomePage() {
                         <h2 class="section-title">Popular Genres</h2>
                     </div>
                 </Col>                
+            </Row>
+            <Row>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <GenreCard genre={{genreid:1, name:"Fantasy"}}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <GenreCard genre={{genreid:2, name:"Fantasy"}}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <GenreCard genre={{genreid:3, name:"Fantasy"}}/>
+                </Col>
+                <Col xs="12" sm="6" md="6" lg="3">
+                    <GenreCard genre={{genreid:4, name:"Fantasy"}}/>
+                </Col>
             </Row>
         </Container>
         </section>
