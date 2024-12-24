@@ -3,7 +3,7 @@ import { Card, CardBody, CardTitle, CardText, CardImg, Row, Col, CardHeader, Car
 import { faClipboardList } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import '../assets/css/BookInfo.css'; // Import the CSS file
-import { publicApi } from '../services/api';
+import { publicApi, authorizedApi } from '../services/api';
 import { Link } from 'react-router-dom';
 import useScrollToTop from '../services/useScrollToTop';
 import Comment from '../components/Comment';
@@ -15,10 +15,15 @@ const ResponsiveCard = (props) => {
     const bookid = props.bookid;
     const { user } = useContext(AuthContext);
     const [book, setBook] = useState(null);
+    const [review, setReview] = useState(null);
+    const [comment, setComment] = useState(null);
+    const [bookComments, setbookComments] = useState([]);
     const [isExpanded, setIsExpanded] = useState(false);
     const [fullDescription, setFullDescription] = useState("");
     const [reviewFormVisible, setReviewFormVisible] = useState(false);
     const [commentFormVisible, setCommentFormVisible] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     useScrollToTop();
 
     useEffect(() => {
@@ -26,7 +31,6 @@ const ResponsiveCard = (props) => {
             try {
                 const response = await publicApi.get(`/book/bookid/${bookid}`);
                 setBook(response.data);
-                console.log(response.data)
                 setFullDescription(response.data.description);
             } catch (error) {
                 console.error('Failed to fetch book', error);
@@ -36,8 +40,55 @@ const ResponsiveCard = (props) => {
         fetchbook(bookid);
     }, [bookid]);
 
+    useEffect(() => {
+        const fetchbookcomments = async (bookid) => {
+            try {
+                const response = await publicApi.get(`/comment/bookid/${bookid}/getallcomments`,{
+                    params: { page: currentPage}});
+                console.log(response.data)
+                setbookComments(response.data[0]);
+                setTotalPages(response.data[1]);
+            } catch (error) {
+                console.error('Failed to fetch comments', error);
+            }
+        };
+
+        fetchbookcomments(bookid);
+    }, [bookid,currentPage]);
+
+    useEffect(() => {
+        const fetchReview = async (bookid) => {
+            try {
+                const response = await authorizedApi.get(`/review/user_review/${bookid}`);
+                setReview(response.data);
+            } catch (error) {
+                console.error('Failed to fetch review', error);
+            }
+        };
+
+        if (user) {
+            fetchReview(bookid);
+          }
+    }, [bookid,user]);
+    
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
     if (!book) {
         return (<h1>Loading</h1>);
+    }
+
+    if (!Array.isArray(bookComments)){
+        return <h1>Loading...</h1>
     }
 
     const wordLimit = 20;
@@ -72,18 +123,18 @@ const ResponsiveCard = (props) => {
                             </Col>
                             <Col md={5} xs={12} className='book-details'>
                                 <CardBody>
-                                    <CardText className="book-info"><span>Author:</span> {book.authors[0]}</CardText>
+                                    <CardText className="book-info"><span>Author:</span><Link to={`/author/${book.authorids[0]}`}> {book.authors[0]}</Link></CardText>
                                     <CardText className="book-info"><span>Format:</span> {book.format}</CardText>
                                     <CardText className="book-info"><span>Pages:</span> {book.page_numbers}</CardText>
                                     <CardText className="book-info"><span>Published on:</span> {book.pub_date}</CardText>
-                                    <CardText className="book-info"><span>Goodreads rating:</span> {book.goodreads_rating}</CardText>
-                                    <CardText className="book-info"><span>Potato rating:</span> 4.58</CardText>
+                                    <CardText className="book-info"><span>Goodreads rating:</span> {book.goodreads_rating} / 5.00</CardText>
+                                    <CardText className="book-info"><span>Potatometer:</span> 4.58 / 5.00</CardText>
                                     <CardText className="book-info">
                                         <span>Genres: </span>
-                                        {book.genres.map((genre) => {
+                                        {book.genres.map((genre,index) => {
                                             return (<>
                                             &nbsp;
-                                            <Link to={'/genre/1'}>{genre}</Link>
+                                            <Link to={`/genre/${book.genreids[index]}`}>{genre}</Link>
                                             &nbsp;
                                             </>)
                                         }
@@ -94,7 +145,7 @@ const ResponsiveCard = (props) => {
                                         e.preventDefault();
                                         setCommentFormVisible(false);
                                         setReviewFormVisible(!reviewFormVisible);
-                                    }} className="m-0 btn btn-link">Add Review</Button>
+                                    }} className="m-0 btn btn-link">{review ? <>Edit Review</> : <>Add Review</>}</Button>
                                     <Button onClick={(e) => {
                                         e.preventDefault();
                                         setReviewFormVisible(false);
@@ -111,7 +162,7 @@ const ResponsiveCard = (props) => {
                         )}
                         {reviewFormVisible && (
                             <CardFooter>
-                                <ReviewForm oldreview={{review: "hhhh" ,rating: 0}}/>
+                                <ReviewForm oldreview={review}/>
                             </CardFooter>
                         )}
                         <CardFooter className="book-footer">
@@ -134,7 +185,28 @@ const ResponsiveCard = (props) => {
             <div className="section-header align-center">
                 <h2 className="section-title">Comments</h2>
             </div>
-            <Comment commentid={1} />
+            {bookComments.map((comment)=>{return <Comment commentid={comment.commentid} />})}
+            <Row className="mt-4">
+                <Col className="text-center">
+                    <Button
+                        color="primary"
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </Button>
+                    <span className="mx-2">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                        color="primary"
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </Button>
+                </Col>
+            </Row>
         </>
     );
 };

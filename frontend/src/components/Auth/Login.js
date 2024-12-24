@@ -113,7 +113,7 @@ function Login() {
                   <Button
                     className="mt-4"
                     color="primary"
-                    type="button"
+                    type="submit"
                     disabled={!getIsFormValid()}
                     onClick={handleSubmit}
                   >

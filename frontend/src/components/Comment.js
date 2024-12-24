@@ -13,6 +13,7 @@ const Comment = (props) => {
         const fetchComment = async (commentid) => {
         try {
             const response = await publicApi.get(`/comment/get/${commentid}`);
+            console.log(response.data)
             setComment(response.data); // Set the Comment state with the fetched data
         } catch (error) {
             console.error('Failed to fetch Comment', error);

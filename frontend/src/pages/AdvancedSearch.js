@@ -6,7 +6,7 @@ function AdvancedSearch() {
     return (
         <Container>
         <CardHeader><h1 className='text-center'>Advanced Search</h1></CardHeader>
-        <Card lg={8} md={10} sm={12} xs={12} className='mx-auto p-2 rounded-1'>
+        <Card className='mx-auto p-2 rounded-1'>
             <CardBody>
                 <Row classname="m-2">
                     <Col lg={7} md={8} sm={10} xs={12} className='mx-auto '>
@@ -71,6 +71,95 @@ function AdvancedSearch() {
                 
             </CardBody>
         </Card>
+            <Col lg={4} md={6} sm={10} xs={10} className='ms-auto'>
+                <MultiSelectComponent />
+            </Col>
+            <Col  >
+            <TableRow book={{
+    "authors": [
+        "J.K. Rowling"
+    ],
+    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1546910265i/2.jpg",
+    "description": "Harry Potter is about to start his fifth year at Hogwarts School of Witchcraft and Wizardry. Unlike most schoolboys, Harry never enjoys his summer holidays, but this summer is even worse than usual. The Dursleys, of course, are making his life a misery, but even his best friends, Ron and Hermione, seem to be neglecting him.Harry has had enough. He is beginning to think he must do something, anything, to change his situation, when the summer holidays come to an end in a very dramatic fashion. What Harry is about to discover in his new year at Hogwarts will turn his world upside down...",
+    "format": "Paperback",
+    "genres": [
+        "Adventure",
+        "Audiobook",
+        "Childrens",
+        "Fiction",
+        "Magic",
+        "Middle Grade",
+        "Young Adult"
+    ],
+    "goodreads_rating": 4.5,
+    "page_numbers": 912,
+    "pub_date": "Sat, 21 Jun 2003 00:00:00 GMT",
+    "title": "Harry Potter and the Order of the Phoenix"
+}}/>
+            <TableRow book={{
+    "authors": [
+        "J.K. Rowling"
+    ],
+    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1546910265i/2.jpg",
+    "description": "Harry Potter is about to start his fifth year at Hogwarts School of Witchcraft and Wizardry. Unlike most schoolboys, Harry never enjoys his summer holidays, but this summer is even worse than usual. The Dursleys, of course, are making his life a misery, but even his best friends, Ron and Hermione, seem to be neglecting him.Harry has had enough. He is beginning to think he must do something, anything, to change his situation, when the summer holidays come to an end in a very dramatic fashion. What Harry is about to discover in his new year at Hogwarts will turn his world upside down...",
+    "format": "Paperback",
+    "genres": [
+        "Adventure",
+        "Audiobook",
+        "Childrens",
+        "Fiction",
+        "Magic",
+        "Middle Grade",
+        "Young Adult"
+    ],
+    "goodreads_rating": 4.5,
+    "page_numbers": 912,
+    "pub_date": "Sat, 21 Jun 2003 00:00:00 GMT",
+    "title": "Harry Potter and the Order of the Phoenix"
+}}/>
+            <TableRow book={{
+    "authors": [
+        "J.K. Rowling"
+    ],
+    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1546910265i/2.jpg",
+    "description": "Harry Potter is about to start his fifth year at Hogwarts School of Witchcraft and Wizardry. Unlike most schoolboys, Harry never enjoys his summer holidays, but this summer is even worse than usual. The Dursleys, of course, are making his life a misery, but even his best friends, Ron and Hermione, seem to be neglecting him.Harry has had enough. He is beginning to think he must do something, anything, to change his situation, when the summer holidays come to an end in a very dramatic fashion. What Harry is about to discover in his new year at Hogwarts will turn his world upside down...",
+    "format": "Paperback",
+    "genres": [
+        "Adventure",
+        "Audiobook",
+        "Childrens",
+        "Fiction",
+        "Magic",
+        "Middle Grade",
+        "Young Adult"
+    ],
+    "goodreads_rating": 4.5,
+    "page_numbers": 912,
+    "pub_date": "Sat, 21 Jun 2003 00:00:00 GMT",
+    "title": "Harry Potter and the Order of the Phoenix"
+}}/>
+            <TableRow book={{
+    "authors": [
+        "J.K. Rowling"
+    ],
+    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1546910265i/2.jpg",
+    "description": "Harry Potter is about to start his fifth year at Hogwarts School of Witchcraft and Wizardry. Unlike most schoolboys, Harry never enjoys his summer holidays, but this summer is even worse than usual. The Dursleys, of course, are making his life a misery, but even his best friends, Ron and Hermione, seem to be neglecting him.Harry has had enough. He is beginning to think he must do something, anything, to change his situation, when the summer holidays come to an end in a very dramatic fashion. What Harry is about to discover in his new year at Hogwarts will turn his world upside down...",
+    "format": "Paperback",
+    "genres": [
+        "Adventure",
+        "Audiobook",
+        "Childrens",
+        "Fiction",
+        "Magic",
+        "Middle Grade",
+        "Young Adult"
+    ],
+    "goodreads_rating": 4.5,
+    "page_numbers": 912,
+    "pub_date": "Sat, 21 Jun 2003 00:00:00 GMT",
+    "title": "Harry Potter and the Order of the Phoenix"
+}}/>
+</Col>
         </Container>
     )
 }

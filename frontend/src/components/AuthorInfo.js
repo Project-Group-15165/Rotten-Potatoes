@@ -11,6 +11,9 @@ const AuthorInfo = (props) => {
     const [books, setBooks] = useState(null)
     const [isExpanded, setIsExpanded] = useState(false);
     const [fullBio,setFullBio] = useState('')
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
     const wordLimit = 20;
 
     const replaceNullValues = (obj) => {
@@ -32,9 +35,12 @@ const AuthorInfo = (props) => {
     useEffect(() => {
         const fetchauthor = async (authorid) => {
             try {
-                const response = await publicApi.get(`/author/authorid/${authorid}`);
+                const response = await publicApi.get(`/author/authorid/${authorid}`,{
+                    params: { page: currentPage } });
+                console.log(response.data)
                 setAuthor(response.data.author); 
-                setBooks(response.data.books)
+                setBooks(response.data.books[0])
+                setTotalPages(response.data.books[1])
                 if (response.data.author.summary === null){
                     setFullBio("N/A")
                 }
@@ -47,7 +53,7 @@ const AuthorInfo = (props) => {
         };
 
         fetchauthor(authorid)
-    },[authorid]);
+    },[authorid,currentPage]);
 
     if(!author && !books){
         return (<h1>Loading</h1>)
@@ -59,6 +65,18 @@ const AuthorInfo = (props) => {
             return words.slice(0, limit).join(' ') + '...';
         }
         return text;
+    };
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
     };
 
     return (
@@ -109,6 +127,27 @@ const AuthorInfo = (props) => {
             {books.map((book)=>{
                 return <Bookcard bookid={book.bookid}/>
             })}
+        </Row>
+        <Row className="mt-4">
+            <Col className="text-center">
+                <Button
+                    color="primary"
+                    onClick={handlePreviousPage}
+                    disabled={currentPage === 1}
+                >
+                    Previous
+                </Button>
+                <span className="mx-2">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                    color="primary"
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                >
+                    Next
+                </Button>
+            </Col>
         </Row>
         </Container>
     );

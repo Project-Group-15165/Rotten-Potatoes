@@ -11,6 +11,7 @@ function ReviewForm(props) {
 
     useEffect(()=>{
         if (oldreview){
+            console.log(oldreview)
             SetReview(oldreview);
             request = "/id/update"
         };
