@@ -70,24 +70,10 @@ class Review:
 class Progress:
     userid: int
     bookid: int
-    reading_status: str
-    pages_read: int
-    started_reading: datetime
-    finished_reading: datetime
-
-
-@dataclass
-class List:
-    listid: int
-    listname: str
-    creationdate: datetime = field(default_factory=datetime.now)
-
-@dataclass
-class ListItem:
-    bookid: int
-    listid: int
-    addedon: datetime = field(default_factory=datetime.now)
-
+    notes: str = None
+    pages_read: int = 0
+    started_reading: datetime = None
+    finished_reading: datetime = None
 
 @dataclass
 class userBook:

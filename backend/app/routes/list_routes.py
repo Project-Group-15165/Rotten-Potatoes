@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, current_app
 from app.utils.auth import jwt_required
-from app.models import List
 from app.services import ListService
 from app.models import Progress
 from app.services import ProgressService
@@ -15,8 +14,6 @@ bp = Blueprint("list", __name__)
 def get_lists(identity):
     try:
         all_lists = ListService.get_all_user_lists(userid=identity["userid"])
-        if not all_lists:
-            return jsonify({"message": "Lists not found"}), 404
         return jsonify(all_lists), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500
@@ -27,9 +24,18 @@ def get_lists(identity):
 def get_list_items(identity, listid):
     try:
         books = ListService.get_list_items(listid=listid)
-        if not books:
-            return jsonify({"message": "Books not found"}), 404
         return jsonify(books), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+    
+# Get the lists where the book exists
+@bp.route("/<bookid>/getlistsofbook", methods=["GET"])
+@jwt_required
+def get_book_list(identity, bookid):
+    try:
+        lists = ListService.get_book_list(userid=identity["userid"], bookid=bookid)
+        return jsonify(lists), 200
+        # It can be empty, no problem
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
@@ -47,6 +53,15 @@ def create_new_list(identity):
         return jsonify({"message": "List created"}), 201
     except Exception as e:
         return jsonify({"message": str(e)}), 500
+    
+@bp.route("/createdefault", methods=["POST"])
+@jwt_required
+def create_default(identity):
+    try:
+        ListService.default_lists(userid=identity["userid"])
+        return jsonify({"message": " Default lists created"}), 201
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
 
 # Add a book to a list
 @bp.route("/<listid>/addbook", methods=["POST"])
@@ -61,9 +76,7 @@ def add_list_item(identity, listid):
 
         default_progress = Progress(
             userid=identity["userid"],
-            bookid=bookid,
-            reading_status="to_read",
-            pages_read=0,)
+            bookid=bookid,)
         ProgressService.add_progress(default_progress)
         return jsonify({"message": "Book added to the list and progress created"}), 201
     except Exception as e:
@@ -85,7 +98,7 @@ def rename_list(identity, listid):
         return jsonify({"message": str(e)}), 500
 
 # Delete a list
-@bp.route("/<listid>/delete", methods=["DELETE"])
+@bp.route("/delete/<listid>", methods=["DELETE"])
 @jwt_required
 def delete_list(identity, listid):
     try:
@@ -98,7 +111,7 @@ def delete_list(identity, listid):
 # Remove a book from a list
 # Not sure if bookid should be given as parameter
 # or get with json as in add book
-@bp.route("/<listid>/<bookid>/delete", methods=["DELETE"])
+@bp.route("/delete/<listid>/<bookid>", methods=["DELETE"])
 @jwt_required
 def delete_list_item(identity, listid, bookid):
     try:

@@ -17,7 +17,7 @@ CREATE TABLE Progress (
     progressID SERIAL PRIMARY KEY,
     userID INT,
     bookID INT,
-    reading_status VARCHAR(20) CHECK (reading_status IN ('to_read', 'in_progress', 'completed')),
+    notes TEXT,
     pages_read INT DEFAULT 0,
     started_reading DATE,
     finished_reading DATE,
@@ -43,26 +43,29 @@ CREATE TABLE Reviews(
 );
 
 CREATE TABLE Lists (
-    listID SERIAL PRIMARY KEY, 
-    list_name TEXT NOT NULL
-);
-
-CREATE TABLE UserLists (
-    userID INT,
-    listID INT,
-    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
-    FOREIGN KEY (listID) REFERENCES Lists(listID) ON DELETE CASCADE,
-    PRIMARY KEY (userID, listID) 
+    listID SERIAL PRIMARY KEY,
+    userID INT NOT NULL,
+    list_name TEXT NOT NULL,
+    created_on DATE DEFAULT CURRENT_DATE,
+    updated_on DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE
 );
 
 CREATE TABLE ListItems (
     bookID INT,
     listID INT,
-    added_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    added_on DATE DEFAULT CURRENT_DATE,
     FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE,
     FOREIGN KEY (listID) REFERENCES Lists(listID) ON DELETE CASCADE,
-    PRIMARY KEY (bookID, listID)
+    PRIMARY KEY (bookID, listID),
+    CONSTRAINT unique_book_per_list UNIQUE (bookID, listID)
 );
+
+/*
+ALTER TABLE ListItems ADD CONSTRAINT unique_book_per_list UNIQUE (bookID, listID);
+CREATE INDEX idx_listID ON ListItems(listID);
+CREATE INDEX idx_userID ON Lists(userID);
+*/
 
 CREATE TABLE Books (
     bookID SERIAL PRIMARY KEY,         

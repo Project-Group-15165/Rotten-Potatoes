@@ -1,7 +1,6 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.utils.db import get_db_connection
-from app.models import List
 
 class ListService:
 
@@ -9,17 +8,14 @@ class ListService:
     def get_all_user_lists(userid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
+        query = """
+                SELECT list_name 
+                FROM lists 
+                WHERE userid = %s;
+                """
         try:
             #postgres converts identifiers to lowercase
-            cursor.execute(
-                """
-                SELECT lists.listid, list_name 
-                FROM lists 
-                JOIN userlists ON userlists.listid = lists.listid 
-                WHERE userlists.userid = %s;
-                """,
-                (userid,)
-            )
+            cursor.execute(query, (userid,))
             list_data = cursor.fetchall()
             if list_data:
                 return list_data
@@ -35,17 +31,33 @@ class ListService:
     def get_list_items(listid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        try:
-            # do i need book name?
-            # return book card info
-            cursor.execute(
-                """
+        query = """
                 SELECT bookid, added_on 
                 FROM listitems 
                 WHERE listid = %s;
-                """,
-                (listid,)
-            )
+                """
+        try:
+            # return book card info
+            cursor.execute(query, (listid,))
+            return cursor.fetchall() or []
+        except Exception as e:
+            raise e
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def get_book_list(userid, bookid):
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        query = """
+                SELECT Lists.listID, Lists.list_name, ListItems.bookID
+                FROM Lists
+                JOIN ListItems ON Lists.listID = ListItems.listID
+                WHERE Lists.userID = %s AND ListItems.bookID = %s;
+                """
+        try:
+            cursor.execute(query, (userid, bookid),)
             return cursor.fetchall() or []
         except Exception as e:
             raise e
@@ -57,16 +69,9 @@ class ListService:
     def create_new_list(list_name, userid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
+        query = "INSERT INTO lists (userid, list_name) VALUES (%s, %s);"
         try:
-            cursor.execute(
-                "INSERT INTO lists (list_name) VALUES (%s) RETURNING listid;",
-                (list_name,)
-            )
-            listid = cursor.fetchone()['listid']
-            cursor.execute(
-                "INSERT INTO userlists (userid, listid) VALUES (%s, %s);",
-                (userid, listid,)
-            )
+            cursor.execute(query, (userid, list_name,))
             conn.commit()
         except Exception as e:
             conn.rollback()
@@ -85,11 +90,9 @@ class ListService:
     def add_list_item(bookid, listid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
+        query = "INSERT INTO listitems (bookid, listid) VALUES (%s, %s);"
         try:
-            cursor.execute(
-                "INSERT INTO listitems (bookid, listid) VALUES (%s, %s);",
-                (bookid, listid,)
-            )
+            cursor.execute(query, (bookid, listid,))
             conn.commit()
         except Exception as e:
             conn.rollback()
@@ -103,10 +106,10 @@ class ListService:
         conn = get_db_connection()
         cursor = conn.cursor()
         query = """
-            UPDATE lists
-            SET list_name = %s
-            WHERE listid = %s;
-        """
+                UPDATE lists
+                SET list_name = %s
+                WHERE listid = %s;
+                """
         try:
             cursor.execute(query, (new_name, listid))
             conn.commit()
