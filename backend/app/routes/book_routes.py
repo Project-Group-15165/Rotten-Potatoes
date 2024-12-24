@@ -5,17 +5,6 @@ from app.services import BookService
 
 bp = Blueprint("book", __name__)
 
-@bp.route("/booktitle/<booktitle>", methods=["GET"])
-def Book_information(booktitle):
-    try:
-        book = BookService.get_book_by_title(booktitle)
-    except Exception as e:
-        return jsonify({"message": str(e)}), 500
-    if book:
-        return jsonify(book), 201
-    else:
-        return jsonify({"message": "no such book"}), 404
-
 
 @bp.route("/add", methods=["POST"])
 @jwt_required
@@ -93,6 +82,8 @@ def get_book_by_id(bookid):
     except Exception as e:
         return jsonify({"message": str(e)}), 500
     if book:
+        pub_date = str(book["pub_date"]).split("-")[::-1]
+        book["pub_date"] = "-".join(x for x in pub_date)
         return jsonify(book), 201
     else:
         return jsonify({"message": "no such book"}), 404

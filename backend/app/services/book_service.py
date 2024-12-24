@@ -36,42 +36,6 @@ class BookService:
                     conn.close()
 
     @staticmethod
-    def get_book_by_title(title: str):
-        conn = get_db_connection()
-        if conn:
-            with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """
-                    SELECT 
-                        T1.title, 
-                        T1.cover, 
-                        T1.description, 
-                        T1.format, 
-                        T1.goodreads_rating, 
-                        ARRAY_AGG(DISTINCT T3.name) AS genres, 
-                        ARRAY_AGG(DISTINCT T5.name) AS authors, 
-                        T1.page_numbers, 
-                        T1.pub_date
-                    FROM books AS T1
-                    JOIN bookgenres AS T2 ON T1.bookID = T2.bookID
-                    JOIN genres AS T3 ON T2.genreid = T3.genreid
-                    JOIN bookauthors AS T4 ON T1.bookID = T4.bookID
-                    JOIN authors AS T5 ON T4.authorid = T5.authorid
-                    WHERE T1.title = %s
-                    GROUP BY T1.bookID 
-                """
-                try:
-                    cur.execute(query, (title,))
-                    book = cur.fetchone()  # only one book
-                    if book:
-                        return book
-                    return None
-                except Exception as e:
-                    raise e
-                finally:
-                    cur.close()
-                    conn.close()
-
-    @staticmethod
     def delete_book(bookid: int):
         conn = get_db_connection()
         if conn:
@@ -126,23 +90,41 @@ class BookService:
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = """
+                    WITH OrderedAuthors AS (
+                        SELECT 
+                            T4.bookID, 
+                            ARRAY_AGG(T5.authorid ORDER BY T5.authorid ASC) AS authorids,
+                            ARRAY_AGG(T5.name ORDER BY T5.authorid ASC) AS authors
+                        FROM bookauthors AS T4
+                        JOIN authors AS T5 ON T4.authorid = T5.authorid
+                        GROUP BY T4.bookID
+                    ),
+                    OrderedGenres AS (
+                        SELECT 
+                            T2.bookID, 
+                            ARRAY_AGG(T3.genreid ORDER BY T3.genreid ASC) AS genreids,
+                            ARRAY_AGG(T3.name ORDER BY T3.genreid ASC) AS genres
+                        FROM bookgenres AS T2
+                        JOIN genres AS T3 ON T2.genreid = T3.genreid
+                        GROUP BY T2.bookID
+                    )
                     SELECT 
                         T1.title, 
                         T1.cover, 
                         T1.description, 
                         T1.format, 
                         T1.goodreads_rating, 
-                        ARRAY_AGG(DISTINCT T3.name) AS genres, 
-                        ARRAY_AGG(DISTINCT T5.name) AS authors, 
+                        G.genres, 
+                        G.genreids,
+                        A.authors, 
+                        A.authorids,
                         T1.page_numbers, 
                         T1.pub_date
                     FROM books AS T1
-                    JOIN bookgenres AS T2 ON T1.bookID = T2.bookID
-                    JOIN genres AS T3 ON T2.genreid = T3.genreid
-                    JOIN bookauthors AS T4 ON T1.bookID = T4.bookID
-                    JOIN authors AS T5 ON T4.authorid = T5.authorid
-                    WHERE T1.bookID = %s
-                    GROUP BY T1.bookID 
+                    JOIN OrderedAuthors AS A ON T1.bookID = A.bookID
+                    JOIN OrderedGenres AS G ON T1.bookID = G.bookID
+                    WHERE T1.bookID = %s;
+
                 """
 
                 try:
