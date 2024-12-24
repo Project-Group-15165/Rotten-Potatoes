@@ -38,7 +38,7 @@ def add_progress(identity, bookid):
     progress = Progress(
         userid=identity["userid"],
         bookid=bookid,
-        reading_status=data.get("reading_status"),
+        notes=data.get("notes"),
         pages_read=data.get("pages_read"),
         started_reading=data.get("started_reading"),
         finished_reading=data.get("finished_reading"),

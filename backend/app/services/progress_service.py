@@ -50,7 +50,7 @@ class ProgressService:
     def add_progress(progress: Progress):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        prompt = """INSERT INTO progress (userid, bookid, reading_status, pages_read, started_reading, finished_reading)
+        prompt = """INSERT INTO progress (userid, bookid, notes, pages_read, started_reading, finished_reading)
         VALUES (%s,%s,%s,%s,%s,%s);
         """
         try:
@@ -59,16 +59,13 @@ class ProgressService:
                 (
                     progress.userid,
                     progress.bookid,
-                    progress.reading_status,
+                    progress.notes,
                     progress.pages_read,
                     progress.started_reading,
                     progress.finished_reading,
                 ),
             )
-            cursor.execute("RETURNING progressID;")
-            inserted_id = cursor.fetchone()['progressID']
             conn.commit()
-            return inserted_id
         except Exception as e:
             conn.rollback()
             raise e
@@ -81,9 +78,9 @@ class ProgressService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         prompt = """UPDATE progress 
-        SET reading_status = %s, pages_read = %s, started_reading = %s, finished_reading = %s
+        SET notes = %s, pages_read = %s, started_reading = %s, finished_reading = %s
         WHERE userid = %s AND bookid = %s;
-        """
+        """  
         try:
             cursor.execute(
                 prompt,
@@ -96,16 +93,14 @@ class ProgressService:
                     progress.bookid,
                 ),
             )
-            cursor.execute("RETURNING progressID;")
-            inserted_id = cursor.fetchone()['progressID']
             conn.commit()
-            return inserted_id
         except Exception as e:
             conn.rollback()
             raise e
         finally:
             cursor.close()
             conn.close()
+
 
     @staticmethod
     def delete_progress(userid, bookid):
