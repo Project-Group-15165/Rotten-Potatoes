@@ -122,11 +122,12 @@ def book_by_authorid(authorid):  # author + 4books -> => changed to author+ all 
     per_page = request.args.get("per_page", 4, type=int)
     try:
         author_info = AuthorService.get_author(authorid=authorid)
-        
-        books = AuthorService.get_all_books_of_author(authorid=authorid, per_page=per_page, page_number=page)
+
+        books = AuthorService.get_all_books_of_author(
+            authorid=authorid, per_page=per_page, page_number=page
+        )
         if not books:
             return jsonify({"message": "no books"}), 404
-        print(books)
 
         response = {"author": author_info, "books": books}
         return jsonify(response), 200

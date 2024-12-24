@@ -173,7 +173,7 @@ class AuthorService:
                 FROM authors a
                 INNER JOIN bookauthors ba ON a.authorid = ba.authorid
                 WHERE ba.authorid = %s;
-                """,   
+                """,
                 (authorid,),
             )
             result = cursor.fetchone()
@@ -182,25 +182,26 @@ class AuthorService:
             page_count = ceil((total_count) / per_page)
 
             if page_number > page_count:
-                return [], page_count, page_count
-
+                return [], page_count
             cursor.execute(  # is it better to show highest rated books?
                 """
-                SELECT b.bookid, b.title, b.cover, b.description, b.format, b.page_numbers, b.pub_date, b.goodreads_rating   
+                SELECT b.bookid   
                 FROM books b INNER JOIN bookauthors ba 
                 ON b.bookid = ba.bookid
                 WHERE ba.authorid = %s
                 --ORDER BY b.goodreads_rating DESC      
                 LIMIT %s OFFSET %s;
                 """,
-                (authorid,per_page, offset,),
+                (
+                    authorid,
+                    per_page,
+                    offset,
+                ),
             )
             books_data = cursor.fetchall()
-            print(books_data)
             if books_data:
-                books = [Book(**book) for book in books_data]
-                return books
-            return []
+                return books_data, page_count
+            return [], page_count
         except Exception as e:
             raise e
         finally:
