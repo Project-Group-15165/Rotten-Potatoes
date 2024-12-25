@@ -27,7 +27,7 @@ const AuthProvider = ({ children }) => {
     };
 
     // Optionally, you can set up a periodic check if needed
-    const intervalId = setInterval(fetchUser, 60000); // Check every 60 seconds
+    const intervalId = setInterval(fetchUser, 15*60000); // Check every 15*60 seconds
 
     // Cleanup function to clear the interval
     return () => clearInterval(intervalId);

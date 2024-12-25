@@ -42,7 +42,7 @@ function App() {
           {/* Specific Pages */}
           <Route path="/book/:bookid" element={<BookPage />} />
           <Route path="/author/:authorid" element={<AuthorPage />} />
-          <Route path="/genre/:genreid" element={<GenrePage />} />
+          <Route path="/genre/:genreid/:name" element={<GenrePage />} />
           {/* Auth Pages */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

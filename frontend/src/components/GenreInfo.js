@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Container, Button } from 'reactstrap';
-import { useParams } from "react-router-dom";
 import { publicApi } from '../services/api';
 import BookCard from './cards/Bookcard';
 

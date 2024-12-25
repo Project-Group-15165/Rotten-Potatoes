@@ -37,9 +37,7 @@ class GenreService:
         try:
             cursor.execute(
                 prompt,
-                (
-                    genre.name,
-                ),
+                (genre.name,),
             )
             conn.commit()
         except Exception as e:
@@ -88,13 +86,13 @@ class GenreService:
             conn.close()
 
     @staticmethod
-    def get_all_genres(page_number, per_page, input_word):                         
+    def get_all_genres(page_number, per_page, input_word):
         offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = """SELECT count(*) FROM genres WHERE LOWER(name) LIKE %s"""
-                try:      
+                try:
                     cur.execute(
                         query,
                         ("%" + input_word + "%",),
@@ -106,7 +104,7 @@ class GenreService:
 
                     if page_number > page_count:
                         return [], page_count
-                    
+
                     cur.execute(
                         """SELECT * FROM genres 
                         WHERE LOWER(name) LIKE %s
@@ -114,18 +112,17 @@ class GenreService:
                         """,
                         (("%" + input_word + "%"), per_page, offset),
                     )
-                       
+
                     genreIds = cur.fetchall()
                     if genreIds:
-                        return genreIds
+                        return genreIds, page_count
                     return None
                 except Exception as e:
-                    raise e 
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
 
-      
     @staticmethod
     def get_all_books_of_genre(genreid, page_number, per_page):
         offset = (page_number - 1) * per_page
@@ -138,7 +135,7 @@ class GenreService:
                 FROM books b
                 INNER JOIN bookgenres bg ON b.bookid = bg.bookid
                 WHERE bg.genreid = %s;
-                """,   
+                """,
                 (genreid,),
             )
             result = cursor.fetchone()
@@ -147,7 +144,7 @@ class GenreService:
             page_count = ceil((total_count) / per_page)
 
             if page_number > page_count:
-                return [], page_count, page_count
+                return [], page_count
 
             cursor.execute(
                 """
@@ -160,17 +157,11 @@ class GenreService:
                 (genreid, per_page, offset),
             )
             books_data = cursor.fetchall()
-            print(books_data)
             if books_data:
-                # books = [Book(**book) for book in books_data]
-                # return books, page_count, page_count
-                return books_data, page_count, page_count
+                return books_data, page_count
             return [], page_count, page_count
         except Exception as e:
             raise e
         finally:
             cursor.close()
             conn.close()
-
-
-   

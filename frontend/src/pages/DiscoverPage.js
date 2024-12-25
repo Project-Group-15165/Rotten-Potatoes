@@ -4,6 +4,7 @@ import { publicApi } from '../services/api';
 import { Col, Container, Row, Button } from "reactstrap";
 import BookCard from "../components/cards/Bookcard";
 import AuthorCard from "../components/cards/Authorcard";
+import GenreCard from "../components/cards/genrecard";
 import useScrollToTop from "../services/useScrollToTop";
 
 const DiscoverPage = () => {
@@ -81,7 +82,11 @@ const DiscoverPage = () => {
             </Col>
         ));
     } else if (page === "genres") {
-        // Handle genres if needed
+        components = ids.map((genre) => (
+            <Col key={genre.genreid} lg={3} md={4} xs={12} className="my-4">
+                <GenreCard genre={genre} />
+            </Col>
+        ));
     }
 
     

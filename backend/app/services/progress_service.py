@@ -11,10 +11,7 @@ class ProgressService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
-            cursor.execute(
-                "SELECT * FROM progress WHERE userid = %s;",
-                (userid,)
-            )
+            cursor.execute("SELECT * FROM progress WHERE userid = %s;", (userid,))
             progress_data = cursor.fetchall()
             if progress_data:
                 progress_list = [Progress(**row) for row in progress_data]
@@ -33,7 +30,10 @@ class ProgressService:
         try:
             cursor.execute(
                 "SELECT * FROM progress WHERE userid = %s And bookid = %s;",
-                (userid, bookid,)
+                (
+                    userid,
+                    bookid,
+                ),
             )
             progress_data = cursor.fetchone()
             if progress_data:
@@ -80,7 +80,7 @@ class ProgressService:
         prompt = """UPDATE progress 
         SET notes = %s, pages_read = %s, started_reading = %s, finished_reading = %s
         WHERE userid = %s AND bookid = %s;
-        """  
+        """
         try:
             cursor.execute(
                 prompt,
@@ -101,7 +101,6 @@ class ProgressService:
             cursor.close()
             conn.close()
 
-
     @staticmethod
     def delete_progress(userid, bookid):
         conn = get_db_connection()
@@ -109,7 +108,8 @@ class ProgressService:
         try:
             cursor.execute(
                 "DELETE FROM progress WHERE userid = %s And bookid = %s;",
-                (userid, bookid))
+                (userid, bookid),
+            )
             conn.commit()
         except Exception as e:
             conn.rollback()

@@ -31,6 +31,9 @@ function Login() {
   const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  if(user){
+    navigate('/')
+  }
   const getIsFormValid = () => { 
     return ( 
       email && 
@@ -46,7 +49,7 @@ function Login() {
         localStorage.setItem('token', access_token); // Store the token in local storage
         const current_user = getCurrentUser();
         setUser(current_user);
-        navigate('/profile')
+        navigate(-1)
       } else {
         setError(true)
         console.error('Token is undefined');
@@ -64,8 +67,7 @@ function Login() {
           <Card className="bg-secondary shadow border-0">
             <CardHeader className="bg-white pb-5">
               <div className="text-center mb-3">
-                <h1 className="display-4">Log In 
-                {user ? user.username : ''}</h1>
+                <h1 className="display-4">Log In </h1>
               </div>
             </CardHeader>
             <CardBody className="px-lg-5 py-lg-5">
