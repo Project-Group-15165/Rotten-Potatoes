@@ -12,7 +12,7 @@ const AuthorCard = (props) => {
         const fetchAuthor = async (authorid) => {
         try {
             const response = await publicApi.get(`/author/get/${authorid}`);
-            setAuthor(response.data); // Set the Book state with the fetched data
+            setAuthor(response.data); // Set the Author state with the fetched data
         } catch (error) {
             console.error('Failed to fetch Author', error);
         }
