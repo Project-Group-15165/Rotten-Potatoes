@@ -105,7 +105,7 @@ def get_bookCard_by_id(bookid):
 def all_books():
     page = request.args.get("page", 1, type=int)
     per_page = request.args.get("per_page", 10, type=int)
-    input_word = request.args.get("input_word", type=str)
+    input_word = request.args.get("input_word","", type=str).lower()
     try:
         Booksids = BookService.get_all_books(
             page_number=page, per_page=per_page, input_word=input_word

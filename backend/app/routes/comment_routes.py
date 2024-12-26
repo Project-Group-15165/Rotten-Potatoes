@@ -12,11 +12,6 @@ def new_comments(identity, bookid):
     
     content = data.get("content")
     spoiler = data.get("spoiler")
-    # it think when we fill it is gonna be yes or not so i change it to true or false
-    if (spoiler.lower() == "yes"): # we can make thg+is as list of yes and no to the user
-        spoiler = True
-    else: 
-        spoiler = False
     comment = Comment(
         userid=identity["userid"], bookid=bookid, content=content, spoiler=spoiler,
     )
@@ -29,15 +24,13 @@ def new_comments(identity, bookid):
 
 @bp.route("/<bookid>/update", methods=["PUT"]) #should i add the comment id here
 @jwt_required
-def update_comment(identity, commentid):
-    comment = CommentService.get_comment(commentid=commentid)
+def update_comment(identity, bookid):
     data = request.get_json()
-    comment.content = data.get("content")
-    comment.soiler = data.get("spoiler") # How to update time !
     
     try:
-        CommentService.update_comment(comment=comment)
+        CommentService.update_comment(data)
     except Exception as e:
+        print(str(e))
         return jsonify({"message": "error can't update comment " + str(e)}), 500
 
     return jsonify({"message": "success"}), 200
@@ -89,6 +82,19 @@ def user_comments(userid):
 def getcomment_by_id(commentid):
     try:
         book = CommentService.get_comment(commentid)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+    if book:
+        return jsonify(book), 201
+    else:
+        return jsonify({"message": "no such comment"}), 404
+    
+@bp.route("/getbybookuser/<bookid>", methods=["GET"])
+@jwt_required
+def getcomment_by_user_book(identity,bookid):
+    userid = identity["userid"]
+    try:
+        book = CommentService.get_comment_bybook_user(userid=userid, bookid=bookid)
     except Exception as e:
         return jsonify({"message": str(e)}), 500
     if book:

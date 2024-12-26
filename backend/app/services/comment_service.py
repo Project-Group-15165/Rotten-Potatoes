@@ -4,11 +4,10 @@ from app.utils.db import get_db_connection
 from app.models import Comment
 from math import ceil
 
-
 class CommentService:
-
+    
     @staticmethod
-    def get_all_comments_of_book(bookid: int, page_number, per_page):
+    def get_all_comments_of_book(bookid : int, page_number, per_page):
         offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
@@ -24,8 +23,8 @@ class CommentService:
                     page_count = ceil((total_count) / per_page)
 
                     if page_number > page_count:
-                        return [], page_count
-
+                        return [], page_count, page_count
+                    
                     cur.execute(
                         """SELECT commentid FROM comments 
                         WHERE bookid =%s
@@ -33,19 +32,19 @@ class CommentService:
                         """,
                         (bookid, per_page, offset),
                     )
-
+                    
                     commentIds = cur.fetchall()
                     if commentIds:
-                        return commentIds, page_count
+                        return commentIds , page_count
                     return None
                 except Exception as e:
                     raise e
                 finally:
                     cur.close()
                     conn.close()
-
+    
     @staticmethod
-    def get_all_comments_of_user(userid: int, page_number, per_page):
+    def get_all_comments_of_user(userid : int, page_number, per_page):
         offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
@@ -62,7 +61,7 @@ class CommentService:
 
                     if page_number > page_count:
                         return [], page_count, page_count
-
+                    
                     cur.execute(
                         """SELECT commentid FROM comments 
                         WHERE userid =%s
@@ -70,7 +69,7 @@ class CommentService:
                         """,
                         (userid, per_page, offset),
                     )
-
+                    
                     commentIds = cur.fetchall()
                     if commentIds:
                         return commentIds
@@ -80,12 +79,13 @@ class CommentService:
                 finally:
                     cur.close()
                     conn.close()
-
+                    
+    
     @staticmethod
     def get_comment(commentid):
         conn = get_db_connection()
         if conn:
-            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:    
                 try:
                     cur.execute(
                         """SELECT T1.*,T2.username,T2.avatar 
@@ -93,7 +93,34 @@ class CommentService:
                         JOIN users as T2 ON T1.userid = T2.userid
                         WHERE T1.commentid=%s;
                         """,
-                        (commentid,),  # no need for book title, we already have it
+                        (commentid,), 
+                    )
+                    comment_data = cur.fetchone()
+                    if comment_data:
+                        return comment_data
+                    return None
+                except Exception as e:
+                    raise e
+                finally:
+                    cur.close()
+                    conn.close()  
+                    
+    @staticmethod
+    def get_comment_bybook_user(userid, bookid):
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:    
+                try:
+                    cur.execute(
+                        """SELECT T1.*,T2.username,T2.avatar 
+                        FROM comments as T1 
+                        JOIN users as T2 ON T1.userid = T2.userid
+                        WHERE T1.userid=%s AND T1.bookid=%s;
+                        """,
+                        (
+                            userid,
+                            bookid,
+                        ),
                     )
                     comment_data = cur.fetchone()
                     if comment_data:
@@ -104,9 +131,9 @@ class CommentService:
                 finally:
                     cur.close()
                     conn.close()
-
+                    
     @staticmethod
-    def add_comment(comment: Comment):
+    def add_comment(comment : Comment):
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -120,7 +147,7 @@ class CommentService:
                             comment.bookid,
                             comment.content,
                             comment.creation_date,
-                            comment.spoiler,
+                            comment.spoiler
                         ),
                     )
                     conn.commit()
@@ -130,9 +157,10 @@ class CommentService:
                 finally:
                     cur.close()
                     conn.close()
-
+                    
     @staticmethod
-    def update_comment(comment: Comment):
+    def update_comment(comment ):
+        print(comment)
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -140,15 +168,15 @@ class CommentService:
                 query = """UPDATE comments SET 
                     content=%s, creation_date= now(), spoiler=%s
                     WHERE bookID=%s AND userid=%s 
-                """
+                """ 
                 try:
                     cur.execute(
                         query,
                         (
-                            comment.content,
-                            comment.spoiler,
-                            comment.bookid,
-                            comment.userid,
+                            comment["content"],
+                            comment["spoiler"],
+                            comment["bookid"],
+                            comment["userid"]
                         ),
                     )
                     conn.commit()
@@ -158,15 +186,15 @@ class CommentService:
                 finally:
                     cur.close()
                     conn.close()
-
+                    
     @staticmethod
-    def delete_comment(commentid: int):
+    def delete_comment(commentid : int):
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = "DELETE FROM comments WHERE commentid=%s"
                 try:
-                    cur.execute(query, (commentid,))
+                    cur.execute(query,(commentid,))
                     conn.commit()
                 except Exception as e:
                     conn.rollback()
@@ -174,3 +202,4 @@ class CommentService:
                 finally:
                     cur.close()
                     conn.close()
+                       

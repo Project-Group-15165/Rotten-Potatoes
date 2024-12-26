@@ -27,6 +27,9 @@ class Book:
     page_numbers: int
     pub_date: datetime
     goodreads_rating: float
+    goodreads_rating: float
+    reviews_number: int = 0
+    potato_meter: float = 0
     bookid: int = 0
 
 

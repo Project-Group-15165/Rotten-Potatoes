@@ -114,6 +114,8 @@ class BookService:
                         T1.description, 
                         T1.format, 
                         T1.goodreads_rating, 
+                        T1.potato_meter,
+                        T1.reviews_number,
                         G.genres, 
                         G.genreids,
                         A.authors, 
