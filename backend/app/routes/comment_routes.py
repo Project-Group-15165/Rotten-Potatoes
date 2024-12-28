@@ -38,13 +38,14 @@ def update_comment(identity, bookid):
 
 @bp.route("/<bookid>/delete", methods=["DELETE"])
 @jwt_required
-def delete_comment(identity, commentid):
-    comment = CommentService.get_comment(commentid=commentid)
+def delete_comment(identity, bookid):
+    comment = CommentService.get_comment_bybook_user(bookid=bookid, userid=identity["userid"])
     if not comment:
         return jsonify({"message": "no comment to delete"}), 404
     try:
-        CommentService.delete_comment(commentid)
+        CommentService.delete_comment(comment["commentid"])
     except Exception as e:
+        print(str(e))
         return jsonify({"message": "error can't delete comment " + str(e)}), 500
 
     return jsonify({"message": "success"}), 200
