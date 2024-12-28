@@ -2,20 +2,18 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from app.utils.db import get_db_connection
 
-
 class ListService:
-
     @staticmethod
     def get_all_user_lists(userid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         query = """
-                SELECT listid,list_name 
+                SELECT list_name 
                 FROM lists 
                 WHERE userid = %s;
                 """
         try:
-            # postgres converts identifiers to lowercase
+            #postgres converts identifiers to lowercase
             cursor.execute(query, (userid,))
             list_data = cursor.fetchall()
             if list_data:
@@ -27,6 +25,7 @@ class ListService:
             cursor.close()
             conn.close()
 
+    
     @staticmethod
     def get_list_items(listid):
         conn = get_db_connection()
@@ -51,19 +50,13 @@ class ListService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         query = """
-                SELECT Lists.listID, Lists.list_name, ListItems.bookID
-                FROM Lists
-                LEFT JOIN ListItems ON Lists.listID = ListItems.listID AND ListItems.bookID = %s
-                WHERE Lists.userID = %s ;
+                SELECT T1.listID, T1.list_name, T2.bookID
+                FROM (SELECT listid, list_name from Lists WHERE userID = %s) as T1
+                LEFT JOIN (SELECT bookID, listid from Listitems WHERE bookid = %s) as T2
+				ON T1.listID = T2.listId;
                 """
         try:
-            cursor.execute(
-                query,
-                (
-                    bookid,
-                    userid,
-                ),
-            )
+            cursor.execute(query, (userid, bookid),)
             return cursor.fetchall() or []
         except Exception as e:
             raise e
@@ -77,13 +70,7 @@ class ListService:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         query = "INSERT INTO lists (userid, list_name) VALUES (%s, %s);"
         try:
-            cursor.execute(
-                query,
-                (
-                    userid,
-                    list_name,
-                ),
-            )
+            cursor.execute(query, (userid, list_name,))
             conn.commit()
         except Exception as e:
             conn.rollback()
@@ -104,13 +91,7 @@ class ListService:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         query = "INSERT INTO listitems (bookid, listid) VALUES (%s, %s);"
         try:
-            cursor.execute(
-                query,
-                (
-                    bookid,
-                    listid,
-                ),
-            )
+            cursor.execute(query, (bookid, listid,))
             conn.commit()
         except Exception as e:
             conn.rollback()
@@ -137,7 +118,7 @@ class ListService:
         finally:
             cursor.close()
             conn.close()
-
+     
     @staticmethod
     def delete_list(listid):
         conn = get_db_connection()
@@ -145,7 +126,7 @@ class ListService:
         try:
             # Check if it is one of the default lists
             cursor.execute("SELECT list_name FROM lists WHERE listid = %s;", (listid,))
-            result = cursor.fetchone()
+            result = cursor.fetchone() 
             if not result:
                 raise Exception("List not found")
             name = result["list_name"]
@@ -162,6 +143,7 @@ class ListService:
             cursor.close()
             conn.close()
 
+
     @staticmethod
     def delete_list_item(listid, bookid):
         conn = get_db_connection()
@@ -169,10 +151,7 @@ class ListService:
         try:
             cursor.execute(
                 "DELETE FROM listitems WHERE listid = %s AND bookid = %s;",
-                (
-                    listid,
-                    bookid,
-                ),
+                (listid, bookid,)
             )
             conn.commit()
         except Exception as e:

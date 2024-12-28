@@ -8,7 +8,6 @@ bp = Blueprint("list", __name__)
 
 # Identity should be passed as first argument if jwt_required
 
-
 # Get all lists for a user
 @bp.route("/all", methods=["GET"])
 @jwt_required
@@ -19,7 +18,6 @@ def get_lists(identity):
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
-
 # Get all books in a list
 @bp.route("/<listid>/books", methods=["GET"])
 @jwt_required
@@ -29,8 +27,7 @@ def get_list_items(identity, listid):
         return jsonify(books), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-
-
+    
 # Get the lists where the book exists
 @bp.route("/<bookid>/getlistsofbook", methods=["GET"])
 @jwt_required
@@ -41,7 +38,6 @@ def get_book_list(identity, bookid):
         # It can be empty, no problem
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-
 
 # Create a new list
 @bp.route("/create", methods=["POST"])
@@ -57,8 +53,7 @@ def create_new_list(identity):
         return jsonify({"message": "List created"}), 201
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-
-
+    
 @bp.route("/createdefault", methods=["POST"])
 @jwt_required
 def create_default(identity):
@@ -67,7 +62,6 @@ def create_default(identity):
         return jsonify({"message": " Default lists created"}), 201
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-
 
 # Add a book to a list
 @bp.route("/<listid>/addbook", methods=["POST"])
@@ -78,20 +72,15 @@ def add_list_item(identity, listid):
         return jsonify({"message": "Book ID is required"}), 400
     try:
         ListService.add_list_item(bookid=bookid, listid=listid)
+        jsonify({"message": "Book added to the list"}), 201
 
         default_progress = Progress(
             userid=identity["userid"],
-            bookid=bookid,
-        )
-        progress = ProgressService.get_progress(
-            bookid=bookid, userid=identity["userid"]
-        )
-        if not progress:
-            ProgressService.add_progress(default_progress)
+            bookid=bookid,)
+        ProgressService.add_progress(default_progress)
         return jsonify({"message": "Book added to the list and progress created"}), 201
     except Exception as e:
         return jsonify({"message": str(e)}), 500
-
 
 # Rename a list
 @bp.route("/<listid>/rename", methods=["PUT"])
@@ -108,7 +97,6 @@ def rename_list(identity, listid):
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
-
 # Delete a list
 @bp.route("/delete/<listid>", methods=["DELETE"])
 @jwt_required
@@ -120,10 +108,6 @@ def delete_list(identity, listid):
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
-
-# Remove a book from a list
-# Not sure if bookid should be given as parameter
-# or get with json as in add book
 @bp.route("/delete/<listid>/<bookid>", methods=["DELETE"])
 @jwt_required
 def delete_list_item(identity, listid, bookid):

@@ -19,7 +19,7 @@ CREATE TABLE Progress (
     bookID INT,
     notes TEXT,
     pages_read INT DEFAULT 0,
-    started_reading DATE,
+    started_reading DATE DEFAULT CURRENT_DATE,
     finished_reading DATE,
     FOREIGN KEY (userID) REFERENCES Users(userID) ON DELETE CASCADE,
     FOREIGN KEY (bookID) REFERENCES Books(bookID) ON DELETE CASCADE
