@@ -43,6 +43,7 @@ const ResponsiveCard = (props) => {
         fetchbook(bookid);
     }, [bookid]);
 
+    // To fetch all comments
     useEffect(() => {
         const fetchbookcomments = async (bookid) => {
             try {
@@ -61,6 +62,7 @@ const ResponsiveCard = (props) => {
         fetchbookcomments(bookid);
     }, [bookid,currentPage]);
 
+    // If logged in to fetch that user's comment
     useEffect(() => {
         const fetchComment = async (bookid) => {
             try {
@@ -77,19 +79,35 @@ const ResponsiveCard = (props) => {
     }, [bookid,user]);
 
     useEffect(() => {
+        if (comment) {
+            console.log("Updated comment state:", comment);
+        }
+    }, [comment]); // This will log when comment changes
+
+    // if logged in to fetch that user's revier
+    useEffect(() => {
         const fetchReview = async (bookid) => {
             try {
                 const response = await authorizedApi.get(`/review/user_review/${bookid}`);
+                console.log("Fetched review:", response.data); // Check if this returns the correct data
                 setReview(response.data);
             } catch (error) {
                 console.error('Failed to fetch review', error);
             }
         };
-
+    
         if (user) {
             fetchReview(bookid);
-          }
-    }, [bookid,user]);
+        }
+    }, [user, bookid]); // Only refetch when user changes
+    
+    // Use another useEffect to log the review once it's updated
+    useEffect(() => {
+        if (review) {
+            console.log("Updated review state:", review);
+        }
+    }, [review]); // This will log when review changes
+    
     
     const handlePreviousPage = () => {
         if (currentPage > 1) {
@@ -188,12 +206,16 @@ const ResponsiveCard = (props) => {
                         </Row>
                         {commentFormVisible && (
                             <CardFooter>
-                                <CommentForm bookid={bookid} oldcomment={comment}/>
+                                <CommentForm 
+                                bookid={bookid} 
+                                oldcomment={comment}
+                                />
                             </CardFooter>
-                        )}
+                            )}
+
                         {reviewFormVisible && (
                             <CardFooter>
-                                <ReviewForm oldreview={review}/>
+                                <ReviewForm bookid={bookid} oldreview={review}/>
                             </CardFooter>
                         )}
                         <CardFooter className="book-footer">

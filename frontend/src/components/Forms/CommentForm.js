@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Input, InputGroup, FormGroup, Form, Button, Label } from "reactstrap";
-import {authorizedApi} from '../../services/api'; // Ensure you import or define `authorizedApi`
+import { useNavigate } from "react-router-dom";
+import {authorizedApi} from '../../services/api'; 
 
 function CommentForm(props) {
-  const { oldcomment, bookid } = props;
+  const navigate = useNavigate();
+  const { oldcomment, bookid} = props;
   const [comment, setComment] = useState({
     content: "",
     spoiler: false,
@@ -26,24 +28,34 @@ function CommentForm(props) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const method = oldcomment ? "put" : "post"; // Use PUT for updates
+      const method = oldcomment ? "put" : "post"; 
       const endpoint = oldcomment
         ? `comment/${bookid}/update`
         : `comment/${bookid}/add`;
 
-      console.log("Submitting to API Endpoint:", endpoint);
-      console.log("Payload:", comment);
+      const response = await authorizedApi[method](endpoint, comment);
+      console.log("Response:", response.data);
 
-      const response = await authorizedApi[method](endpoint, comment,{
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-      console.log("Response message:", response.data.message);
-      alert("Comment submitted successfully!");
+      if (response.status === 200 || response.status === 201) {
+        navigate(0); 
+      }
     } catch (error) {
-      console.error("Submission error details:", error.response || error.message);
-      alert("Failed to submit comment. Please try again.");
+      console.error("Failed to submit comment", error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!oldcomment) return;
+
+    try {
+      const response = await authorizedApi.delete(`comment/${bookid}/delete`);
+      console.log("Delete Response:", response.data);
+
+      if (response.status === 200 || response.status === 204) {
+        navigate(0);
+      }
+    } catch (error) {
+      console.error("Failed to delete comment", error);
     }
   };
 
@@ -54,7 +66,7 @@ function CommentForm(props) {
         <InputGroup className="input-group-alternative mb-3">
           <Input
             className="form-control"
-            name="content" // Matches the state property
+            name="content" 
             id="content"
             placeholder="Comment on the book..."
             type="textarea"
@@ -83,6 +95,15 @@ function CommentForm(props) {
       <Button className="my-0 btn btn-primary" type="submit">
         Submit
       </Button>
+      {oldcomment && (
+          <Button
+            className="my-0 btn btn-danger ms-2" 
+            type="button"
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
+        )}
     </Form>
   );
 }
