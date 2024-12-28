@@ -134,3 +134,20 @@ def book_by_authorid(authorid):  # author + 4books -> => changed to author+ all 
 
     except Exception as e:
         return jsonify({"message": str(e)}), 500
+
+@bp.route("/getauthornameid", methods=["GET"])
+def getauthornameid():
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    input_word = request.args.get("input_word", "", type=str).lower()
+    try:
+        Authorids = AuthorService.get_id_name_author(
+            page_number=page, per_page=per_page, input_word=input_word
+        )
+    except Exception as e:
+        return jsonify({"message": "error can't get authors" + str(e)}), 500
+
+    if Authorids:
+        return jsonify(Authorids), 201
+    else:
+        return jsonify({"message": "no authors"}), 404

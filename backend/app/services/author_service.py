@@ -189,7 +189,7 @@ class AuthorService:
                 FROM books b INNER JOIN bookauthors ba 
                 ON b.bookid = ba.bookid
                 WHERE ba.authorid = %s
-                --ORDER BY b.goodreads_rating DESC      
+                ORDER BY b.goodreads_rating DESC      
                 LIMIT %s OFFSET %s;
                 """,
                 (
@@ -207,3 +207,43 @@ class AuthorService:
         finally:
             cursor.close()
             conn.close()
+
+    
+    @staticmethod
+    def get_id_name_author(page_number, per_page, input_word):
+        offset = (page_number - 1) * per_page
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                query = """SELECT count(*) FROM authors WHERE LOWER(name) LIKE %s"""
+                try:
+                    cur.execute(
+                        query,
+                        (("%" + input_word + "%"),),
+                    )
+                    result = cur.fetchone()
+                    total_count = result["count"] if result else 0
+
+                    page_count = ceil((total_count) / per_page)
+
+                    if page_number > page_count:
+                        return [], page_count
+
+                    cur.execute(
+                        """SELECT authorid, name FROM authors 
+                        WHERE LOWER(name) LIKE %s
+                        LIMIT %s OFFSET %s;
+                        """,
+                        (("%" + input_word + "%"), per_page, offset),
+                    )
+
+                    authorIds = cur.fetchall()
+                    if authorIds:
+                        return authorIds, page_count
+                    return None
+                except Exception as e:
+                    print(str(e))
+                    raise e
+                finally:
+                    cur.close()
+                    conn.close()
