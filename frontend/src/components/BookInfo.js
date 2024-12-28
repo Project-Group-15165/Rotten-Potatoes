@@ -188,7 +188,7 @@ const ResponsiveCard = (props) => {
                         </Row>
                         {commentFormVisible && (
                             <CardFooter>
-                                <CommentForm comment={comment}/>
+                                <CommentForm bookid={bookid} oldcomment={comment}/>
                             </CardFooter>
                         )}
                         {reviewFormVisible && (
