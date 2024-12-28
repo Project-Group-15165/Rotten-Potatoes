@@ -70,7 +70,6 @@ class ReviewService:
                 (bookid, per_page, offset),
             )
             reviews_data = cursor.fetchall()
-            print(reviews_data)
             if reviews_data:
                 reviews = [Review(**review) for review in reviews_data]
                 return reviews, page_count, page_count
@@ -107,7 +106,6 @@ class ReviewService:
                 (userid, per_page, offset),
             )
             reviews_data = cursor.fetchall()
-            print(reviews_data)
             if reviews_data:
                 return reviews_data, page_count, page_count
             return [], page_count, page_count
@@ -194,7 +192,12 @@ class ReviewService:
         finally:
             cursor.close()
             conn.close()
-        ReviewService.update_potatometer(userid=review.userid, bookid=review.bookid)
+        ReviewService.update_potatometer(
+            bookid=review.bookid,
+        )
+        ReviewService.increment_count(
+            bookid=review.bookid,
+        )
 
     @staticmethod
     def update_review(review, userid, bookid):
@@ -221,6 +224,9 @@ class ReviewService:
         finally:
             cursor.close()
             conn.close()
+        ReviewService.update_potatometer(
+            bookid=bookid,
+        )
 
     @staticmethod
     def delete_review(
@@ -244,24 +250,64 @@ class ReviewService:
         finally:
             cursor.close()
             conn.close()
+        ReviewService.update_potatometer(
+            bookid=bookid,
+        )
+        ReviewService.decrease_count(
+            bookid=bookid,
+        )
 
     @staticmethod
-    def update_potatometer(userid, bookid):
+    def update_potatometer(bookid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         try:
             cursor.execute(
-                "SELECT AVG(rating) AS average FROM reviews WHERE userid =%s AND bookid=%s;",
+                "SELECT AVG(rating) AS average FROM reviews WHERE bookid=%s;",
+                (bookid,),
+            )
+            average = cursor.fetchone()["average"]
+            if average:
+                average = round(average, 2)
+            else:
+                average = 0
+
+            cursor.execute(
+                "UPDATE books SET potato_meter=%s WHERE bookID=%s;",
                 (
-                    userid,
+                    average,
                     bookid,
                 ),
             )
-            average = cursor.fetchone()
-            if average:
-                print(round(average["average"], 2))
+            conn.commit()
         except Exception as e:
-            raise e
-        finally:
-            cursor.close()
-            conn.close()
+            conn.rollback()
+            raise
+
+    @staticmethod
+    def increment_count(bookid):
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute(
+                "UPDATE books SET reviews_number = reviews_number + 1 WHERE bookID=%s;",
+                (bookid,),
+            )
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            raise
+
+    @staticmethod
+    def decrease_count(bookid):
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute(
+                "UPDATE books SET reviews_number = reviews_number - 1 WHERE bookID=%s;",
+                (bookid,),
+            )
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            raise
