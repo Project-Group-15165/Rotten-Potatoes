@@ -5,11 +5,14 @@ from app.services import ProgressService
 
 bp = Blueprint("progress", __name__)
 
+
 @bp.route("/all", methods=["GET"])
 @jwt_required
 def get_all_progress_of_user(identity):
     try:
-        progress_list = ProgressService.get_all_progress_of_user(userid=identity["userid"])
+        progress_list = ProgressService.get_all_progress_of_user(
+            userid=identity["userid"]
+        )
         if not progress_list:
             return jsonify({"message": "No progress found"}), 404
         return jsonify(progress_list), 200
@@ -17,16 +20,16 @@ def get_all_progress_of_user(identity):
         return jsonify({"message": str(e)}), 500
 
 
-@bp.route("/<bookid>", methods=["GET"])
+@bp.route("/bookid/<bookid>", methods=["GET"])
 @jwt_required
 def get_progress(identity, bookid):
     try:
-        progress, percentage = ProgressService.get_progress(userid=identity["userid"], bookid=bookid)
+        progress = ProgressService.get_progress(
+            userid=identity["userid"], bookid=bookid
+        )
         if not progress:
             return jsonify({"message": "Progress not found"}), 404
-        response_data = progress.__dict__
-        response_data["percentage_read"] = percentage
-        return jsonify(response_data), 200
+        return jsonify(progress), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
@@ -54,13 +57,7 @@ def add_progress(identity, bookid):
 @jwt_required
 def update_progress(identity, bookid):
     try:
-        progress, _ = ProgressService.get_progress(userid=identity["userid"], bookid=bookid)
-        if not progress:
-            return jsonify({"message": "Progress not found"}), 404
-        data = request.get_json()
-        for key, value in data.items():
-            if hasattr(progress, key):
-                setattr(progress, key, value)
+        progress = request.get_json()
         ProgressService.update_progress(progress)
         return jsonify({"message": "Progress updated"}), 200
     except Exception as e:
@@ -71,7 +68,9 @@ def update_progress(identity, bookid):
 @jwt_required
 def delete_progress(identity, bookid):
     try:
-        progress, _ = ProgressService.get_progress(userid=identity["userid"], bookid=bookid)
+        progress = ProgressService.get_progress(
+            userid=identity["userid"], bookid=bookid
+        )
         if not progress:
             return jsonify({"message": "Progress not found"}), 404
         ProgressService.delete_progress(userid=identity["userid"], bookid=bookid)

@@ -36,8 +36,8 @@ function ProfileCard(props) {
         </CardText>
       </CardBody>
       <CardFooter className="d-flex justify-content-center">
-      <Button className="mx-2 btn btn-link"><Link to={`/profile/update`}>Update</Link></Button>
-      <Button className="mx-2 btn btn-link"><Link to={`/profile/delete`}>Delete</Link></Button>
+      <Link to={`/profile/update`}><Button className="mx-2 btn btn-link">Update</Button></Link>
+      <Link to={`/profile/delete`}><Button className="mx-2 btn btn-link">Delete</Button></Link>
     </CardFooter>
     </Card>
   );

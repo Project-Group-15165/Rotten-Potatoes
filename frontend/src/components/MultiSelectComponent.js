@@ -3,17 +3,25 @@ import AsyncSelect  from 'react-select/async';
 import axios from 'axios';
 import { publicApi } from '../services/api';
 
-const MultiSelectComponent = () => {
+const MultiSelectComponent = (props) => {
+  const which = props.which
+  let request;
+  if (which==="author"){
+    request = "/author/getauthornameid"
+  }
+  else if (which === "genre"){
+    request = "genre/getallgenres"
+  }
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   const fetchOptions = async (inputValue) => {
     try {
-      const response = await publicApi.get("/author/getallauthors", {
+      const response = await publicApi.get(request, {
         params: {input_word: inputValue },
       });
       const newOptions = response.data[0].map(item => ({
-        value: item.authorid,
-        label: item.authorid
+        value: which === "author" ? item.authorid : item.genreid,
+        label: item.name
       }));
       return newOptions;
     } catch (error) {

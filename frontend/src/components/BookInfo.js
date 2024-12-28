@@ -11,6 +11,7 @@ import AuthContext from '../context/AuthContext';
 import CommentForm from './Forms/CommentForm';
 import ReviewForm from './Forms/ReviewForm';
 import ListForm from './Forms/ListForm'
+import ProgressForm from './Forms/ProgressForm'
 
 const ResponsiveCard = (props) => {
     const bookid = props.bookid;
@@ -202,6 +203,7 @@ const ResponsiveCard = (props) => {
                                     }} className="m-0 btn btn-link">{comment ? <>Edit Comment</> : <>Add Comment</>}</Button>
                                     </>)}
                                 </CardBody>
+
                             </Col>
                         </Row>
                         {commentFormVisible && (
@@ -233,6 +235,7 @@ const ResponsiveCard = (props) => {
                             </p>
                         </CardFooter>
                     </Card>
+                    <Card className="bookcard"><CardBody><ProgressForm bookid={bookid}/></CardBody></Card>
                 </Col>
             </Row>
             <div className="section-header align-center">

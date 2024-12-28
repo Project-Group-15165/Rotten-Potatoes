@@ -3,6 +3,7 @@ from psycopg2.extras import RealDictCursor
 from app.utils.db import get_db_connection
 from app.models import Progress
 
+
 class ProgressService:
     @staticmethod
     def get_all_progress_of_user(userid):
@@ -36,9 +37,7 @@ class ProgressService:
             )
             progress_data = cursor.fetchone()
             if progress_data:
-                percentage_read = progress_data.pop("percentage_read", None)
-                progress_data.pop("page_numbers", None)
-                return Progress(**progress_data), percentage_read
+                return progress_data
             return None, None
         except Exception as e:
             raise e
@@ -74,9 +73,10 @@ class ProgressService:
             conn.close()
 
     @staticmethod
-    def update_progress(progress: Progress):
+    def update_progress(progress):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
+        print(progress)
         try:
             cursor.execute(
                 """
@@ -85,12 +85,12 @@ class ProgressService:
                 WHERE userid = %s AND bookid = %s;
                 """,
                 (
-                    progress.notes,
-                    progress.pages_read,
-                    progress.started_reading,
-                    progress.finished_reading,
-                    progress.userid,
-                    progress.bookid,
+                    progress["notes"],
+                    progress["pages_read"],
+                    progress["started_reading"],
+                    progress["finished_reading"],
+                    progress["userid"],
+                    progress["bookid"],
                 ),
             )
             conn.commit()
@@ -106,7 +106,10 @@ class ProgressService:
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
-            cursor.execute("DELETE FROM progress WHERE userid = %s AND bookid = %s;", (userid, bookid))
+            cursor.execute(
+                "DELETE FROM progress WHERE userid = %s AND bookid = %s;",
+                (userid, bookid),
+            )
             conn.commit()
         except Exception as e:
             conn.rollback()
