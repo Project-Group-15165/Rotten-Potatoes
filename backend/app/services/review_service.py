@@ -194,9 +194,10 @@ class ReviewService:
         finally:
             cursor.close()
             conn.close()
+        ReviewService.update_potatometer(userid=review.userid, bookid=review.bookid)
 
     @staticmethod
-    def update_review(review: Review):
+    def update_review(review, userid, bookid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         prompt = """UPDATE reviews 
@@ -207,10 +208,10 @@ class ReviewService:
             cursor.execute(
                 prompt,
                 (
-                    review.review,
-                    review.rating,
-                    review.userid,
-                    review.bookid,
+                    review["review"],
+                    review["rating"],
+                    userid,
+                    bookid,
                 ),
             )
             conn.commit()
@@ -239,6 +240,27 @@ class ReviewService:
             conn.commit()
         except Exception as e:
             conn.rollback()
+            raise e
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def update_potatometer(userid, bookid):
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cursor.execute(
+                "SELECT AVG(rating) AS average FROM reviews WHERE userid =%s AND bookid=%s;",
+                (
+                    userid,
+                    bookid,
+                ),
+            )
+            average = cursor.fetchone()
+            if average:
+                print(round(average["average"], 2))
+        except Exception as e:
             raise e
         finally:
             cursor.close()

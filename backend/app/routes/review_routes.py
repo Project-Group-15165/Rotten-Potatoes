@@ -109,12 +109,10 @@ def new_review(identity, bookid):
 @jwt_required
 def update_review(identity, bookid):
     userid = identity["userid"]
-    review = ReviewService.get_review(userid=userid, bookid=bookid)
     data = request.get_json()
-    review.rating = data.get("rating")
-    review.review = data.get("review")
+    review = data
     try:
-        ReviewService.update_review(review=review)
+        ReviewService.update_review(review=review, userid=userid, bookid=bookid)
     except Exception as e:
         return jsonify({"message": "error can't update review" + str(e)}), 500
 
@@ -125,7 +123,7 @@ def update_review(identity, bookid):
 @jwt_required
 def delete_review(identity, bookid):
     userid = identity["userid"]
-    review = ReviewService.get_review(userid=userid, bookid=bookid)
+    review = ReviewService.get_user_review(userid=userid, bookid=bookid)
     if not review:
         return jsonify({"message": "no review to delete"}), 404
     try:
