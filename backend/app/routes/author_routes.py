@@ -23,15 +23,8 @@ def get_author(authorid):
 @jwt_required
 def add_author(identity):
     data = request.get_json()
-    author = Author(
-        name=data.get("name"),
-        wiki_link=data.get("wiki_link"),
-        image=data.get("image"),
-        description=data.get("description"),
-        summary=data.get("summary"),
-    )
     try:
-        AuthorService.add_author(author=author)
+        AuthorService.add_author(data)
     except Exception as e:
         return jsonify({"message": "error can't add author " + str(e)}), 500
 
@@ -41,30 +34,10 @@ def add_author(identity):
 @bp.route("/update/<authorid>", methods=["PUT"])
 @jwt_required
 def update_author(identity, authorid):
-    author = AuthorService.get_author(authorid)
     data = request.get_json()
-    if not author:
-        return jsonify({"message": "Author not found"}), 404
-
-    if data.get("name"):
-        author.name = data.get("name")
-    if data.get("wiki_link"):
-        author.wiki_link = data.get("wiki_link")
-    if data.get("image"):
-        author.image = data.get("image")
-    if data.get("description"):
-        author.description = data.get("description")
-    if data.get("summary"):
-        author.summary = data.get("summary")
-
-    # author.name = data.get("name")
-    # author.wiki_link = data.get("wiki_link")
-    # author.image = data.get("image")
-    # author.description = data.get("description")
-    # author.summary = data.get("summary")
-
+    print(data)
     try:
-        AuthorService.update_author(author=author)
+        AuthorService.update_author(data)
     except Exception as e:
         return jsonify({"message": "error can't update author " + str(e)}), 500
 

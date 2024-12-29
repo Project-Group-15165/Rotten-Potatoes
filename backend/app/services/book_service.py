@@ -11,7 +11,7 @@ class BookService:
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
                 query = """INSERT INTO books( title, cover, description, format, page_numbers, pub_date, goodreads_rating)
-                           VALUES ( %s, %s, %s, %s, %s, %s, %s )"""
+                           VALUES ( %s, %s, %s, %s, %s, %s, %s ) RETURNING bookid"""
 
                 try:
                     cur.execute(
@@ -26,8 +26,9 @@ class BookService:
                             book.goodreads_rating,
                         ),
                     )
+                    bookid = cur.fetchone()["bookid"]
                     conn.commit()
-
+                    return bookid
                 except Exception as e:
                     conn.rollback()
                     raise e
@@ -201,21 +202,40 @@ class BookService:
                     conn.close()
                     
     @staticmethod
-    def get_book_by_title(title : str):
+    def getallbooksnameid(page_number, per_page, input_word):
+        offset = (page_number - 1) * per_page
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                query = """SELECT * FROM books 
-                WHERE LOWER(title) LIKE %s
-                """   
-                try:      
-                    cur.execute(query, (("%" + title + "%"),))
-                    book = cur.fetchall()
-                    if book:
-                        return book
+                query = """SELECT count(*) FROM books WHERE LOWER(title) LIKE %s"""
+                try:
+                    cur.execute(
+                        query,
+                        ("%" + input_word + "%",),
+                    )
+                    result = cur.fetchone()
+                    total_count = result["count"] if result else 0
+
+                    page_count = ceil((total_count) / per_page)
+
+                    if page_number > page_count:
+                        return [], page_count
+
+                    cur.execute(
+                        """SELECT bookid , title FROM books 
+                        WHERE LOWER(title) LIKE %s
+                        LIMIT %s OFFSET %s;
+                        """,
+                        (("%" + input_word + "%"), per_page, offset),
+                    )
+
+                    bookIds = cur.fetchall()
+                    if bookIds:
+                        return bookIds, page_count
                     return None
                 except Exception as e:
-                    raise e 
+                    print(str(e))
+                    raise e
                 finally:
                     cur.close()
                     conn.close()
@@ -240,3 +260,44 @@ class BookService:
                     conn.close()
 
     
+############ BookGenre Service ####################
+    @staticmethod
+    def add_bookGenre(genres, bookid):
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                for genre in genres:
+                    query = """INSERT INTO bookgenres( bookid, genreid)
+                            VALUES ( %s, %s) """
+                    try:
+                        cur.execute(
+                            query,
+                            (
+                            bookid,
+                            genre["value"],
+                            ),
+                        )
+                    except Exception as e:
+                        conn.rollback()
+                        raise e
+                conn.commit()  
+            cur.close()
+            conn.close()
+        
+############ BookAuthor Service ####################
+    @staticmethod
+    def add_bookAuthor(authors, bookid):
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                for author in authors:
+                    query = """INSERT INTO bookauthors (bookid, authorid)
+                               VALUES (%s, %s)"""
+                    try:
+                        cur.execute(query, (bookid, author["value"]))
+                    except Exception as e:
+                        conn.rollback()
+                        raise e
+                conn.commit()
+            cur.close()
+            conn.close()

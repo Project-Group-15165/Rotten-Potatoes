@@ -31,23 +31,22 @@ class AuthorService:
             conn.close()
 
     @staticmethod
-    def add_author(author: Author):
+    def add_author(author):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         prompt = """
-        INSERT INTO authors (authorid, name, wiki_link, image, bio)
-        VALUES (%s,%s,%s,%s,%s);
+        INSERT INTO authors (name, wiki_link, image, description)
+        VALUES (%s,%s,%s,%s);
         """
 
         try:
             cursor.execute(
                 prompt,
                 (
-                    author.authorid,
-                    author.name,
-                    author.wiki_link,
-                    author.image,
-                    author.description,
+                    author["name"],
+                    author["wiki_link"],
+                    author["image"],
+                    author["description"],
                 ),
             )
             conn.commit()
@@ -59,7 +58,7 @@ class AuthorService:
             conn.close()
 
     @staticmethod
-    def update_author(author: Author):
+    def update_author(author):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
@@ -70,12 +69,12 @@ class AuthorService:
             cursor.execute(
                 prompt,
                 (
-                    author.name,
-                    author.wiki_link,
-                    author.image,
-                    author.description,
-                    author.summary,
-                    author.authorid,
+                    author["name"],
+                    author["wiki_link"],
+                    author["image"],
+                    author["description"],
+                    author["summary"],
+                    author["authorid"],
                 ),
             )
             conn.commit()

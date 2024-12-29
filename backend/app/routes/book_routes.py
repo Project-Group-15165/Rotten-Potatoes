@@ -27,11 +27,13 @@ def add_book(identity):
         goodreads_rating=goodreads_rating,
     )
     try:
-        BookService.add_book(book=book)
+        bookid = BookService.add_book(book=book)
+        BookService.add_bookGenre(data.get("genres"),bookid)
+        BookService.add_bookAuthor(data.get("authors"),bookid)
     except Exception as e:
         return jsonify({"message": "error can't add book " + str(e)}), 500
 
-    return jsonify({"message": "success"}), 201
+    return jsonify({"message": "success", "bookid" : bookid}), 201
 
 
 @bp.route("/<bookid>/update", methods=["PUT"])
@@ -103,22 +105,30 @@ def all_books():
     else:
         return jsonify({"message": "no reviews"}), 404
     
-@bp.route("/booktitle/<booktitle>", methods=["GET"])
-def Book_information(booktitle : str):
+@bp.route("/getallbooksnameid", methods=["GET"])
+def getallbooksnameid():
+    page = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 10, type=int)
+    input_word = request.args.get("input_word","", type=str).lower()
     try:
-        book = BookService.get_book_by_title(booktitle.lower())
+        Booksids = BookService.getallbooksnameid(
+            page_number=page, per_page=per_page, input_word=input_word
+        )
     except Exception as e:
-        return jsonify({"message": str(e)}), 500
-    if book:
-        return jsonify(book), 201
+        return jsonify({"message": "error can't get books" + str(e)}), 500
+
+    if Booksids:
+        return jsonify(Booksids), 201
     else:
-        return jsonify({"message": "no such book"}), 404
+        return jsonify({"message": "no reviews"}), 404
     
     
 @bp.route("/bookinfoform/<bookid>", methods=["GET"])
 def BookFormInfo(bookid):
     try:
         book = BookService.BookinfoForm(bookid)
+        pub_date = str(book["pub_date"])
+        book["pub_date"] = pub_date
     except Exception as e:
         return jsonify({"message": str(e)}), 500
     if book:
