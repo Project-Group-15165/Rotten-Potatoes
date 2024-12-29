@@ -18,6 +18,9 @@ import AdvancedSearch from './pages/AdvancedSearch';
 import BookPage from './pages/BookPage';
 import AuthorPage from './pages/AuthorPage';
 import GenrePage from './pages/GenrePage';
+import AdminBookPage from './pages/AdminBookPage';
+import AdminAuthorPage from './pages/AdminAuthorPage'
+import AdminGenrePage from './pages/AdminGenrePage'
 /* User Pages */
 import ProfilePage from './pages/ProfilePage';
 import UserPage from './pages/UserPage';
@@ -43,6 +46,9 @@ function App() {
           <Route path="/book/:bookid" element={<BookPage />} />
           <Route path="/author/:authorid" element={<AuthorPage />} />
           <Route path="/genre/:genreid/:name" element={<GenrePage />} />
+          <Route path="/book/add" element={<AdminBookPage/>}/>
+          <Route path="/author/add" element={<AdminAuthorPage/>}/>
+          <Route path="/genre/add" element={<AdminGenrePage/>}/>
           {/* Auth Pages */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

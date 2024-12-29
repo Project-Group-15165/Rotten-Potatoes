@@ -75,13 +75,13 @@ function HomePage() {
                     <GenreCard genre={{genreid:1, name:"Fantasy"}}/>
                 </Col>
                 <Col xs="12" sm="6" md="6" lg="3">
-                    <GenreCard genre={{genreid:2, name:"Fantasy"}}/>
+                    <GenreCard genre={{genreid:2, name:"Young Adult"}}/>
                 </Col>
                 <Col xs="12" sm="6" md="6" lg="3">
-                    <GenreCard genre={{genreid:3, name:"Fantasy"}}/>
+                    <GenreCard genre={{genreid:3, name:"Fiction"}}/>
                 </Col>
                 <Col xs="12" sm="6" md="6" lg="3">
-                    <GenreCard genre={{genreid:4, name:"Fantasy"}}/>
+                    <GenreCard genre={{genreid:4, name:"Magic"}}/>
                 </Col>
             </Row>
         </Container>
