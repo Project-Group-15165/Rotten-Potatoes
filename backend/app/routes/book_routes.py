@@ -37,24 +37,9 @@ def add_book(identity):
 @bp.route("/<bookid>/update", methods=["PUT"])
 @jwt_required
 def update_book(identity, bookid):
-    book = BookService.get_book_by_id(bookid)
     data = request.get_json()
-    # i think title should not be changed
-    # if the attribute is not change ddo not change it
-    if data.get("cover"):
-        book.cover = data.get("cover")
-    if data.get("description"):
-        book.description = data.get("description")
-    if data.get("format"):
-        book.format = data.get("format")
-    if data.get("page_numbers"):
-        book.page_numbers = data.get("page_numbers")
-    if data.get("pub_date"):
-        book.pub_date = data.get("pub_date")
-    if data.get("goodreads_rating"):
-        book.goodreads_rating = data.get("goodreads_rating")
     try:
-        BookService.update_book(book=book)
+        BookService.update_book(data)
     except Exception as e:
         return jsonify({"message": "error can't update book " + str(e)}), 500
 
@@ -64,7 +49,7 @@ def update_book(identity, bookid):
 @bp.route("/<bookid>/delete", methods=["DELETE"])
 @jwt_required
 def delete_book(identity, bookid):
-    book = BookService.get_book_by_id(bookid)
+    book = BookService.BookinfoForm(bookid)
     if not book:
         return jsonify({"message": "no book to delete"}), 404
     try:
@@ -117,3 +102,26 @@ def all_books():
         return jsonify(Booksids), 201
     else:
         return jsonify({"message": "no reviews"}), 404
+    
+@bp.route("/booktitle/<booktitle>", methods=["GET"])
+def Book_information(booktitle : str):
+    try:
+        book = BookService.get_book_by_title(booktitle.lower())
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+    if book:
+        return jsonify(book), 201
+    else:
+        return jsonify({"message": "no such book"}), 404
+    
+    
+@bp.route("/bookinfoform/<bookid>", methods=["GET"])
+def BookFormInfo(bookid):
+    try:
+        book = BookService.BookinfoForm(bookid)
+    except Exception as e:
+        return jsonify({"message": str(e)}), 500
+    if book:
+        return jsonify(book), 201
+    else:
+        return jsonify({"message": "no such book"}), 404

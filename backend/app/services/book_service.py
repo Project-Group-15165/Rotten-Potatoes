@@ -54,7 +54,7 @@ class BookService:
                     conn.close()
 
     @staticmethod
-    def update_book(book: Book):
+    def update_book(book):
         conn = get_db_connection()
         if conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
@@ -66,14 +66,14 @@ class BookService:
                     cur.execute(
                         query,
                         (
-                            book.title,
-                            book.cover,
-                            book.description,
-                            book.format,
-                            book.page_numbers,
-                            book.pub_date,
-                            book.goodreads_rating,
-                            book.bookid,
+                            book["title"],
+                            book["cover"],
+                            book["description"],
+                            book["format"],
+                            book["page_numbers"],
+                            book["pub_date"],
+                            book["goodreads_rating"],
+                            book["bookid"],
                         ),
                     )
                     conn.commit()
@@ -199,3 +199,44 @@ class BookService:
                 finally:
                     cur.close()
                     conn.close()
+                    
+    @staticmethod
+    def get_book_by_title(title : str):
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                query = """SELECT * FROM books 
+                WHERE LOWER(title) LIKE %s
+                """   
+                try:      
+                    cur.execute(query, (("%" + title + "%"),))
+                    book = cur.fetchall()
+                    if book:
+                        return book
+                    return None
+                except Exception as e:
+                    raise e 
+                finally:
+                    cur.close()
+                    conn.close()
+                    
+    @staticmethod
+    def BookinfoForm(bookid: int):
+        conn = get_db_connection()
+        if conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                query = """SELECT * FROM books WHERE bookid=%s"""
+
+                try:
+                    cur.execute(query, (bookid,))
+                    book_data = cur.fetchone()  # only one book
+                    if book_data:
+                        return book_data
+                    return None
+                except Exception as e:
+                    raise e
+                finally:
+                    cur.close()
+                    conn.close()
+
+    
