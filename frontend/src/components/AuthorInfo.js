@@ -13,6 +13,7 @@ const AuthorInfo = (props) => {
     const [fullBio,setFullBio] = useState('')
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const defaultImage = require("../assets/images/author.png");
 
     const wordLimit = 20;
 
@@ -87,7 +88,7 @@ const AuthorInfo = (props) => {
                     <Row className="no-gutters">
                         <Col md={4} xs={12} className='author-image-container'>
                             <CardImg
-                                src={author.image}
+                                src={author.image ? author.image : defaultImage}
                                 alt="Author portrait"
                                 className="author-image"
                             />
@@ -96,13 +97,13 @@ const AuthorInfo = (props) => {
                             <CardBody>
                                 <CardText tag = {'h3'} className='author-title mb-3'>{author.name}</CardText>
                                 <CardText className="author-info my-auto">{author.description}</CardText>
-                                <Button 
+                                {author.wiki_link && <Button 
                                     color="primary" 
                                     className="wiki-link mt-3"
                                     onClick={() => window.open(`${author.wiki_link}`, '_blank')}
                                 >
                                     Wikipedia Page
-                                </Button>
+                                </Button>}
                             </CardBody>
                         </Col>
                     </Row>

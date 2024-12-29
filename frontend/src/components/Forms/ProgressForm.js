@@ -1,23 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Input, Row,Col, InputGroup, FormGroup, Form, Button, Label, Card, CardBody, Progress } from 'reactstrap';
 import { authorizedApi } from "../../services/api";
+import AuthContext from '../../context/AuthContext';
+import { useNavigate } from "react-router-dom";
 
 function ProgressForm(props) {
     const bookid = props.bookid
     const [progress, setProgress] = useState(null);
+    const { user } = useContext(AuthContext);
 
     const fetchprogress = async (bookid) => {
         try {
             const response = await authorizedApi.get(`/progress/bookid/${bookid}`);
             console.log(response.data)
             setProgress(response.data);
+
         } catch (error) {
             console.error('Failed to fetch progress', error);
         }
     };
 
     useEffect(() => {
-        fetchprogress(bookid);
+        if(user){
+            fetchprogress(bookid);
+        }
+        
     }, [bookid]);
 
     const handleChange = (e) => {
@@ -52,11 +59,11 @@ function ProgressForm(props) {
         };
 
     if (!progress) {
-        return (<h1>Loading</h1>);
+        return (<></>);
     }
 
     return(
-        <Card>
+        <Card className="bookcard">
             <CardBody>
                 <Form className="m-0" onSubmit={HandleSubmit}>
                     <FormGroup>

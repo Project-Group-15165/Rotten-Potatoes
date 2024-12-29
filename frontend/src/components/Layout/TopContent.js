@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 
 const TopContent = () => {
   const {user} = useContext(AuthContext);
+  const link = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
 
 
   return (
@@ -33,17 +34,17 @@ const TopContent = () => {
             <div className="social-links">
               <ul className="list-unstyled d-flex gap-3 mb-0">
                 <li>
-                  <a href="#" className="text-decoration-none">
+                  <a href={link} className="text-decoration-none">
                     <FontAwesomeIcon icon={faFacebookF} />
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-decoration-none">
+                  <a href={link} className="text-decoration-none">
                     <FontAwesomeIcon icon={faTwitter} />
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-decoration-none">
+                  <a href={link} className="text-decoration-none">
                     <FontAwesomeIcon icon={faYoutube} />
                   </a>
                 </li>

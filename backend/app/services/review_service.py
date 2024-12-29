@@ -119,11 +119,16 @@ class ReviewService:
     def get_review(reviewid):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        prompt = """SELECT T1.*,T2.username,T2.avatar,T3.title 
-        FROM reviews as T1 
-        JOIN users as T2 ON T1.userid = T2.userid
-        JOIN books as T3 ON T1.bookid = T3.bookid
-        WHERE T1.reviewid=%s;
+        prompt = """
+        SELECT 
+            T1.*, 
+            (SELECT T2.username FROM users AS T2 WHERE T2.userid = T1.userid) AS username,
+            (SELECT T2.avatar FROM users AS T2 WHERE T2.userid = T1.userid) AS avatar,
+            (SELECT T3.title FROM books AS T3 WHERE T3.bookid = T1.bookid) AS title
+        FROM 
+            reviews AS T1
+        WHERE 
+            T1.reviewid = %s;
         """
         try:
             cursor.execute(

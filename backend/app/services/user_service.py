@@ -155,9 +155,10 @@ class UserService:
                 "DELETE FROM users WHERE userid =%s;",
                 (userid,),
             )
+            conn.commit()
         except Exception as e:
-            print(f"Error: {e}")
             conn.rollback()
+            raise e
         finally:
             cursor.close()
             conn.close()

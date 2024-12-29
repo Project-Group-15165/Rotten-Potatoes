@@ -8,6 +8,7 @@ const BookCard = (props) => {
     const bookid = props.bookid;
     const [book, setBook] = useState(null);
     const [isMobile, setIsMobile] = useState(false); // State to track if the screen is small
+    const defaultImage = require("../../assets/images/book.png");
 
     useEffect(() => {
         // Fetch book data
@@ -42,7 +43,7 @@ const BookCard = (props) => {
         <Card
             className={`card book-card mx-auto my-3 ${isMobile ? 'always-show-title' : ''}`} // Add a class for mobile
         >
-            <CardImg src={book.cover} alt={book.title} className="card-img" />
+            <CardImg src={book.cover ? book.cover : defaultImage} alt={book.title} className="card-img" />
             <div className="card-title-container">
                 <Link to={`/book/${book.bookid}`} className="card-title">
                     {book.title}

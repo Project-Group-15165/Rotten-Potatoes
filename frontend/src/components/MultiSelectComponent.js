@@ -4,6 +4,8 @@ import axios from 'axios';
 import { publicApi } from '../services/api';
 
 const MultiSelectComponent = (props) => {
+  const setSelectedOptions = props.setSelected
+  const selectedOptions = props.selected
   const which = props.which
   let request;
   if (which==="author"){
@@ -12,7 +14,6 @@ const MultiSelectComponent = (props) => {
   else if (which === "genre"){
     request = "genre/getallgenres"
   }
-  const [selectedOptions, setSelectedOptions] = useState([]);
 
   const fetchOptions = async (inputValue) => {
     try {

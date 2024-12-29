@@ -2,7 +2,13 @@ import React from "react";
 import { Card, CardTitle, CardBody, CardText } from "reactstrap";
 
 function UserCard(props) {
-  const user = props.user
+  const user = props.user;
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <Card className="my-3 mx-auto" style={{ maxWidth: '18rem' }}>
       <div className="text-center mt-3">
@@ -22,7 +28,7 @@ function UserCard(props) {
           <strong>Email:</strong> {user.email}
         </CardText>
         <CardText>
-          <strong>Birthdate:</strong> {user.birthdate}
+          <strong>Birthdate:</strong> {formatDate(user.birthdate)}
         </CardText>
       </CardBody>
     </Card>

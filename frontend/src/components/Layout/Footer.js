@@ -1,8 +1,10 @@
 import React from 'react';
 import { Container, Row, Col } from 'reactstrap';
-import potato_logo from '../../assets/images/potato-logo.png'
+import potato_logo from '../../assets/images/potato-logo.png';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  const link = "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley";
   return (
     <footer id="footer">
       <Container>
@@ -11,7 +13,7 @@ const Footer = () => {
             <div className="footer-item">
               <div className="company-brand">
                 <img src={potato_logo} alt="logo" className="footer-logo" />
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sagittis sed ptibus liberolectus nonet psryroin. Amet sed lorem posuere sit iaculis amet, ac urna. Adipiscing fames semper erat ac in suspendisse iaculis.</p>
+                <p>Welcome to our project! We are dedicated to creating a comprehensive platform for book enthusiasts. Our mission is to provide a seamless experience for discovering, reading, and sharing books. Whether you're looking for the latest bestsellers, classic literature, or hidden gems, our platform has something for everyone. Join our community and embark on a literary journey with us!</p>
               </div>
             </div>
           </Col>
@@ -20,19 +22,19 @@ const Footer = () => {
               <h5>About Us</h5>
               <ul className="menu-list">
                 <li className="menu-item">
-                  <a href="#">Vision</a>
+                  <a href={link}>Vision</a>
                 </li>
                 <li className="menu-item">
-                  <a href="#">Articles</a>
+                  <a href={link}>Articles</a>
                 </li>
                 <li className="menu-item">
-                  <a href="#">Careers</a>
+                  <a href={link}>Careers</a>
                 </li>
                 <li className="menu-item">
-                  <a href="#">Service Terms</a>
+                  <a href={link}>Service Terms</a>
                 </li>
                 <li className="menu-item">
-                  <a href="#">Donate</a>
+                  <a href={link}>Donate</a>
                 </li>
               </ul>
             </div>
@@ -41,40 +43,31 @@ const Footer = () => {
             <div className="footer-menu">
               <h5>Discover</h5>
               <ul className="menu-list">
+              <Link to={"/"} >
                 <li className="menu-item">
-                  <a href="#">Home</a>
+                  Home
                 </li>
+                </Link>
+              <Link to={"/discover/books"} >
                 <li className="menu-item">
-                  <a href="#">Books</a>
+                Books
                 </li>
+                </Link>
+              <Link to={"/discover/authors"} >
                 <li className="menu-item">
-                  <a href="#">Authors</a>
+                  Authors
                 </li>
+                </Link>
+              <Link to={"/discover/genres"} >
                 <li className="menu-item">
-                  <a href="#">Subjects</a>
+                  Genres
                 </li>
+                </Link>
+              <Link to={"/advanced-search"} >
                 <li className="menu-item">
-                  <a href="#">Advanced Search</a>
+                  Advanced Search
                 </li>
-              </ul>
-            </div>
-          </Col>
-          <Col md="2">
-            <div className="footer-menu">
-              <h5>My Account</h5>
-              <ul className="menu-list">
-                <li className="menu-item">
-                  <a href="#">Sign In</a>
-                </li>
-                <li className="menu-item">
-                  <a href="#">View Cart</a>
-                </li>
-                <li className="menu-item">
-                  <a href="#">My Wishlist</a>
-                </li>
-                <li className="menu-item">
-                  <a href="#">Track My Order</a>
-                </li>
+                </Link>
               </ul>
             </div>
           </Col>
@@ -83,16 +76,16 @@ const Footer = () => {
               <h5>Help</h5>
               <ul className="menu-list">
                 <li className="menu-item">
-                  <a href="#">Help Center</a>
+                  <a href={link}>Help Center</a>
                 </li>
                 <li className="menu-item">
-                  <a href="#">Report a Problem</a>
+                  <a href={link}>Report a Problem</a>
                 </li>
                 <li className="menu-item">
-                  <a href="#">Suggesting Edits</a>
+                  <a href={link}>Suggesting Edits</a>
                 </li>
                 <li className="menu-item">
-                  <a href="#">Contact Us</a>
+                  <a href={link}>Contact Us</a>
                 </li>
               </ul>
             </div>

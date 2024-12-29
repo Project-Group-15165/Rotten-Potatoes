@@ -22,7 +22,7 @@ import {
 } from "reactstrap";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faLock, faPerson } from '@fortawesome/free-solid-svg-icons';
 
 function Login() {
   const [email, setEmail] = useState(""); 
@@ -77,7 +77,7 @@ function Login() {
                     <i className="ni ni-bell-55" />
                   </span>
                   <span className="alert-inner--text">
-                    Incorrect email or password
+                    Incorrect username or password
                   </span>
                 </Alert>
               )}
@@ -85,11 +85,11 @@ function Login() {
                 <FormGroup>
                   <InputGroup className="input-group-alternative mb-3">
                     <InputGroupText>
-                      <FontAwesomeIcon icon={faEnvelope} />
+                      <FontAwesomeIcon icon={faPerson} />
                     </InputGroupText>
                     <Input 
-                    placeholder="Email" 
-                    type="email" 
+                    placeholder="Username" 
+                    type="text" 
                     onChange={(e) => { 
                       setEmail(e.target.value); 
                       }}

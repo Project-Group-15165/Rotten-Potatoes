@@ -1,6 +1,5 @@
-import React from "react";
-import {register} from '../../services/authService'
-import { useState } from "react";
+import React, { useState } from "react";
+import { register } from '../../services/authService';
 import { useNavigate } from "react-router-dom";
 
 // reactstrap components
@@ -17,26 +16,31 @@ import {
   Container,
   Row,
   Col,
+  Alert
 } from "reactstrap";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faUserCircle, faUserAlt, faEnvelope, faCalendarAlt, faVenusMars, faImage, faLock } from '@fortawesome/free-solid-svg-icons';
+import useScrollToTop from "../../services/useScrollToTop";
 
 function Register() {
-
-  const navigate = useNavigate()
+  useScrollToTop();
+  const avatars_list = [1, 2, 3, 4, 5, 6];
+  const navigate = useNavigate();
 
   const [userData, setUserData] = useState({
-    username : "",
-    name:"",
-    middle_name:"",
-    last_name:"",
-    email:"",
-    birthdate :"",
-    gender:"",
-    avatar:"",
-    password:""
-  }); 
+    username: "",
+    name: "",
+    middle_name: "",
+    last_name: "",
+    email: "",
+    birthdate: "",
+    gender: "",
+    avatar: "",
+    password: ""
+  });
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,29 +58,44 @@ function Register() {
     }));
   };
 
-  const getIsFormValid = () => { 
-    return ( 
-      true
-    ); 
-  }; 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+
+  const getIsFormValid = () => {
+    return (
+      userData.username &&
+      userData.name &&
+      userData.last_name &&
+      userData.email &&
+      validateEmail(userData.email) &&
+      userData.birthdate &&
+      userData.gender &&
+      userData.avatar &&
+      userData.password
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(userData);
     try {
       const status = await register(userData); // Await the register function
-      console.log(status)
+      console.log(status);
       if (status === 201) { // Check if the status code indicates success
         console.log('Registration successful');
-        navigate('/login')
+        navigate('/login');
       } else {
         console.error('Registration failed');
+        setErrorMessage('Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Registration failed', error);
+      setErrorMessage('Registration failed. Please try again.');
     }
   };
-
 
   return (
     <Container className="pt-lg-7">
@@ -89,18 +108,23 @@ function Register() {
               </div>
             </CardHeader>
             <CardBody className="px-lg-5 py-lg-5">
+              {errorMessage && (
+                <Alert color="danger">
+                  {errorMessage}
+                </Alert>
+              )}
               <Form role="form">
                 <FormGroup>
                   <InputGroup className="input-group-alternative mb-3">
                     <InputGroupText>
                       <FontAwesomeIcon icon={faUser} />
                     </InputGroupText>
-                    <Input 
-                    name = "username"
-                    placeholder="Username" 
-                    type="text" 
-                    value={userData.username}
-                    onChange={handleChange}/>
+                    <Input
+                      name="username"
+                      placeholder="Username"
+                      type="text"
+                      value={userData.username}
+                      onChange={handleChange} />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -108,12 +132,12 @@ function Register() {
                     <InputGroupText>
                       <FontAwesomeIcon icon={faUserCircle} />
                     </InputGroupText>
-                    <Input 
-                    name = "name"
-                    placeholder="First Name"
-                    type="text" 
-                    value={userData.name}
-                    onChange={handleChange}/>
+                    <Input
+                      name="name"
+                      placeholder="First Name"
+                      type="text"
+                      value={userData.name}
+                      onChange={handleChange} />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -121,12 +145,12 @@ function Register() {
                     <InputGroupText>
                       <FontAwesomeIcon icon={faUserAlt} />
                     </InputGroupText>
-                    <Input 
-                    name = "middle_name"
-                    placeholder="Middle Name" 
-                    type="text" 
-                    value={userData.middle_name}
-                    onChange={handleChange}/>
+                    <Input
+                      name="middle_name"
+                      placeholder="Middle Name"
+                      type="text"
+                      value={userData.middle_name}
+                      onChange={handleChange} />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -134,12 +158,12 @@ function Register() {
                     <InputGroupText>
                       <FontAwesomeIcon icon={faUserAlt} />
                     </InputGroupText>
-                    <Input 
-                    name="last_name"
-                    placeholder="Last Name" 
-                    type="text" 
-                    value={userData.last_name}
-                    onChange={handleChange}/>
+                    <Input
+                      name="last_name"
+                      placeholder="Last Name"
+                      type="text"
+                      value={userData.last_name}
+                      onChange={handleChange} />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -147,12 +171,12 @@ function Register() {
                     <InputGroupText>
                       <FontAwesomeIcon icon={faEnvelope} />
                     </InputGroupText>
-                    <Input 
-                    name="email"
-                    placeholder="Email" 
-                    type="email" 
-                    value={userData.email}
-                    onChange={handleChange}/>
+                    <Input
+                      name="email"
+                      placeholder="Email"
+                      type="email"
+                      value={userData.email}
+                      onChange={handleChange} />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -160,12 +184,12 @@ function Register() {
                     <InputGroupText>
                       <FontAwesomeIcon icon={faCalendarAlt} />
                     </InputGroupText>
-                    <Input 
-                    name = "birthdate"
-                    placeholder="Birthdate" 
-                    type="date" 
-                    value={userData.birthdate}
-                    onChange={handleChange}/>
+                    <Input
+                      name="birthdate"
+                      placeholder="Birthdate"
+                      type="date"
+                      value={userData.birthdate}
+                      onChange={handleChange} />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -173,33 +197,15 @@ function Register() {
                     <InputGroupText>
                       <FontAwesomeIcon icon={faVenusMars} />
                     </InputGroupText>
-                    <Input 
-                    type="select" 
-                    name="gender" 
-                    id="genderSelect"
-                    value={userData.gender}
-                    onChange={handleChangeint}>
+                    <Input
+                      type="select"
+                      name="gender"
+                      id="genderSelect"
+                      value={userData.gender}
+                      onChange={handleChangeint}>
                       <option value="">Select Gender</option>
                       <option value="1">Male</option>
                       <option value="2">Female</option>
-                    </Input>
-                  </InputGroup>
-                </FormGroup>
-                <FormGroup>
-                  <InputGroup className="input-group-alternative mb-3">
-                    <InputGroupText>
-                      <FontAwesomeIcon icon={faImage} />
-                    </InputGroupText>
-                    <Input 
-                    type="select" 
-                    name="avatar" 
-                    id="avatarSelect"
-                    value={userData.avatar}
-                    onChange={handleChangeint}>
-                      <option value="">Select a vegetable for your avatar</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
                     </Input>
                   </InputGroup>
                 </FormGroup>
@@ -232,36 +238,33 @@ function Register() {
                 </FormGroup>
                 <div className="text-muted font-italic">
                   <strong>
-                    Before you join us choose the vegetabe that best represents you
+                    Before you join us choose the vegetable that best represents you
                   </strong>
                 </div>
                 <Row>
-                  <Col lg={4} md={4} s ={4} xs={4} >
-                    <a className="btn btn-light p-0 m-1 bg-white rounded-pill"><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
-                  </Col>
-                  <Col lg={4} md={4} s ={4} xs={4}>
-                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
-                  </Col>
-                  <Col lg={4} md={4} s ={4} xs={4}>
-                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
-                  </Col>
-                  <Col lg={4} md={4} s ={4} xs={4}>
-                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
-                  </Col>
-                  <Col lg={4} md={4} s ={4} xs={4}>
-                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
-                  </Col>
-                  <Col lg={4} md={4} s ={4} xs={4}>
-                    <a className="btn btn-light p-0 m-1 "><img src={require(`../../assets/images/avatars/1.png`)}></img></a>
-                  </Col>
-                  
+                  {avatars_list.map((avatar) => (
+                    <Col lg={4} md={4} s={4} xs={4} key={avatar}>
+                      <a
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setUserData((prevData) => ({
+                            ...prevData,
+                            avatar: avatar
+                          }));
+                        }}
+                        className={`btn btn-light p-0 m-1 bg-white rounded-pill ${userData.avatar === avatar ? 'border border-primary' : ''}`}
+                      >
+                        <img src={require(`../../assets/images/avatars/${avatar}.png`)} alt={`Avatar ${avatar}`} />
+                      </a>
+                    </Col>
+                  ))}
                 </Row>
                 <div className="text-center">
                   <Button
                     className="mt-4"
                     color="primary"
                     type="button"
-                    disabled = {!getIsFormValid}
+                    disabled={!getIsFormValid()}
                     onClick={handleSubmit}
                   >
                     Create account

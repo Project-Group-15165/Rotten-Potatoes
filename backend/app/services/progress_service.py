@@ -38,7 +38,7 @@ class ProgressService:
             progress_data = cursor.fetchone()
             if progress_data:
                 return progress_data
-            return None, None
+            return None
         except Exception as e:
             raise e
         finally:

@@ -24,6 +24,7 @@ import { faUser, faUserCircle, faUserAlt, faEnvelope, faCalendarAlt, faVenusMars
 import { update } from "../services/authService";
 
 function UpdateUser() {
+  const avatars_list = [1, 2, 3, 4, 5, 6];
 
   const navigate = useNavigate()
 
@@ -164,24 +165,24 @@ function UpdateUser() {
                     </Input>
                   </InputGroup>
                 </FormGroup>
-                <FormGroup>
-                  <InputGroup className="input-group-alternative mb-3">
-                    <InputGroupText>
-                      <FontAwesomeIcon icon={faImage} />
-                    </InputGroupText>
-                    <Input 
-                    type="select" 
-                    name="avatar" 
-                    id="avatarSelect"
-                    value={userData.avatar}
-                    onChange={handleChangeint}>
-                      <option value="">Select a vegetable for your avatar</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                    </Input>
-                  </InputGroup>
-                </FormGroup>
+                <Row>
+                                  {avatars_list.map((avatar) => (
+                                    <Col lg={4} md={4} s={4} xs={4} key={avatar}>
+                                      <a
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          setUserData((prevData) => ({
+                                            ...prevData,
+                                            avatar: avatar
+                                          }));
+                                        }}
+                                        className={`btn btn-light p-0 m-1 bg-white rounded-pill ${userData.avatar === avatar ? 'border border-primary' : ''}`}
+                                      >
+                                        <img src={require(`../assets/images/avatars/${avatar}.png`)} alt={`Avatar ${avatar}`} />
+                                      </a>
+                                    </Col>
+                                  ))}
+                                </Row>
                 <div className="text-center">
                   <Button
                     className="mt-4"

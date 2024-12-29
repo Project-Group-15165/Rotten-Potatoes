@@ -48,7 +48,7 @@ def update_profile(identity):
         return jsonify({"message": str(e)}), 500
 
 
-@bp.route("/profile/delete", methods=["POST"])
+@bp.route("/profile/delete", methods=["DELETE"])
 @jwt_required
 def delete_profile(identity):
     userid = identity["userid"]

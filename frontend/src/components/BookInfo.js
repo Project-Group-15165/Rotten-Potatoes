@@ -28,6 +28,7 @@ const ResponsiveCard = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(true);
+    const defaultImage = require("../assets/images/book.png");
     useScrollToTop();
 
     useEffect(() => {
@@ -166,7 +167,7 @@ const ResponsiveCard = (props) => {
                         <Row className="no-gutters">
                             <Col md={4} xs={12} className='d-flex align-items-center justify-content-center book-image-container'>
                                 <CardImg
-                                    src={book.cover}
+                                    src={book.cover ? book.cover : defaultImage}
                                     alt="Book cover"
                                     className="book-image"
                                 />
@@ -235,7 +236,7 @@ const ResponsiveCard = (props) => {
                             </p>
                         </CardFooter>
                     </Card>
-                    <Card className="bookcard"><CardBody><ProgressForm bookid={bookid}/></CardBody></Card>
+                    <ProgressForm bookid={bookid}/>
                 </Col>
             </Row>
             <div className="section-header align-center">

@@ -148,7 +148,7 @@ const BookForm = () => {
         `book/${selectedBook.bookid}/delete`
       );
       if (response.status === 200 || response.status === 204) {
-        navigate('');
+        navigate('/');
       }
     } catch (error) {
       console.error('Failed to delete book:', error);

@@ -13,6 +13,11 @@ function ProfileCard(props) {
   } catch (error) {
     profileImage = defaultImage;
   }
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
   return (
     <Card className="my-3 mx-auto" style={{ maxWidth: '18rem' }}>
       <div className="text-center mt-3">
@@ -32,7 +37,7 @@ function ProfileCard(props) {
           <strong>Email:</strong> {user.email}
         </CardText>
         <CardText>
-          <strong>Birthdate:</strong> {user.birthdate}
+          <strong>Birthdate:</strong> {formatDate(user.birthdate)}
         </CardText>
       </CardBody>
       <CardFooter className="d-flex justify-content-center">

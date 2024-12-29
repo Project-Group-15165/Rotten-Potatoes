@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Card, CardBody, CardHeader, Col, Container, Row } from 'reactstrap';
 import TableRow from '../components/TableRow';
 import MultiSelectComponent from '../components/MultiSelectComponent';
 import Select from 'react-select';
+import {  publicApi } from '../services/api';
+import useScrollToTop from '../services/useScrollToTop';
 
 function AdvancedSearch() {
     const page_options = [
@@ -13,6 +15,67 @@ function AdvancedSearch() {
         { label: "Between 700 and 900", value: 5 },
         { label: "More than 900", value: 6 },
     ];
+
+    const order_options = [
+        { label : "Order By Title", value:1},
+        { label : "Order By Author", value:2},
+        { label : "Order By Format", value:4},
+        { label : "Order By Rating", value:5},
+        { label : "Order By Year", value:6},
+        { label : "Order By Page Count", value:7},
+    ]
+
+    const formats = [
+        { label: 'Webnovel', value: 'Webnovel' },
+        { label: 'Mass Market Paberback', value: 'Mass Market Paberback' },
+        { label: 'School & Library Binding', value: 'School & Library Binding' },
+        { label: 'Audio', value: 'Audio' },
+        { label: 'Novel', value: 'Novel' },
+        { label: 'eBook', value: 'eBook' },
+        { label: 'Paperback', value: 'Paperback' },
+        { label: 'Hardcover', value: 'Hardcover' },
+        { label: 'Audiobook', value: 'Audiobook' },
+        { label: 'Kindle Edition', value: 'Kindle Edition' },
+        { label: 'Leather Bound', value: 'Leather Bound' },
+        { label: 'Graphic Novel', value: 'Graphic Novel' },
+        { label: 'Board Book', value: 'Board Book' },
+        { label: 'Library Binding', value: 'Library Binding' },
+        { label: 'Digital', value: 'Digital' },
+        { label: 'MP3 CD', value: 'MP3 CD' },
+        { label: 'Box Set', value: 'Box Set' },
+        { label: 'Trade Paperback', value: 'Trade Paperback' },
+        { label: 'Mass Market Paperback', value: 'Mass Market Paperback' },
+        { label: 'Illustrated', value: 'Illustrated' },
+        { label: 'Special Edition', value: 'Special Edition' },
+        { label: 'Spiral-bound', value: 'Spiral-bound' },
+        { label: 'Unabridged', value: 'Unabridged' },
+        { label: 'Annotated', value: 'Annotated' },
+        { label: 'Bilingual', value: 'Bilingual' },
+        { label: 'Collector\'s Edition', value: 'Collector\'s Edition' },
+        { label: 'Enhanced Edition', value: 'Enhanced Edition' },
+        { label: 'Large Print', value: 'Large Print' },
+        { label: 'Miniature', value: 'Miniature' },
+        { label: 'Omnibus', value: 'Omnibus' },
+        { label: 'Podcast', value: 'Podcast' },
+        { label: 'Revised Edition', value: 'Revised Edition' },
+        { label: 'Second Edition', value: 'Second Edition' },
+        { label: 'Textbook', value: 'Textbook' },
+        { label: 'Workbook', value: 'Workbook' },
+        { label: 'Zine', value: 'Zine' },
+        { label: 'Compilation', value: 'Compilation' },
+        { label: 'Journal', value: 'Journal' },
+        { label: 'Magazine', value: 'Magazine' },
+        { label: 'Manual', value: 'Manual' },
+        { label: 'Play', value: 'Play' },
+        { label: 'Screenplay', value: 'Screenplay' },
+        { label: 'Short Story', value: 'Short Story' },
+        { label: 'Sketchbook', value: 'Sketchbook' },
+        { label: 'Yearbook', value: 'Yearbook' },
+        { label: 'Memoir', value: 'Memoir' },
+        { label: 'Guidebook', value: 'Guidebook' },
+        { label: 'Blueprint', value: 'Blueprint' }
+      ];
+      
 
     const customStyles = {
         menu: (provided) => ({
@@ -25,6 +88,59 @@ function AdvancedSearch() {
         }),
     };
 
+    const [input, setInput] = useState("");
+    const [selectedStartYear, setSelectedStartYear] = useState(null);
+    const [selectedEndYear, setSelectedEndYear] = useState(null);
+    const [selectedAuthors, setSelectedAuthors] = useState([]);
+    const [selectedGenres, setSelectedGenres] = useState([]);
+    const [selectedPageNumbers, setSelectedPageNumbers] = useState([]);
+    const [selectedMinRating, setSelectedMinRating] = useState(null);
+    const [selectedMaxRating, setSelectedMaxRating] = useState(null);
+    const [orderBy, setOrderBy] = useState({ label : "Order By Title", value:1})
+    const [selectedFormats, setselectedFormats] = useState([])
+    const [results,setResults] = useState([]) 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const perPage = 10;
+
+    const handleSubmit = async () => {
+        const filters = {
+            selectedFormats: selectedFormats.length ? selectedFormats : null,
+            orderBy: orderBy ? orderBy : null,
+            input: input ? input : "",
+            selectedMaxRating: selectedMaxRating ? selectedMaxRating : null,
+            selectedMinRating: selectedMinRating ? selectedMinRating : null,
+            selectedPageNumbers: selectedPageNumbers.length ? selectedPageNumbers : null,
+            selectedGenres: selectedGenres.length ? selectedGenres : null,
+            selectedAuthors: selectedAuthors.length ? selectedAuthors : null,
+            selectedEndYear: selectedEndYear ? selectedEndYear : null,
+            selectedStartYear: selectedStartYear ? selectedStartYear : null,
+        };
+
+        // Remove null values
+        const filteredFilters = Object.fromEntries(Object.entries(filters).filter(([_, v]) => v != null));
+
+        try{
+            const response = await publicApi.post(`/advancedsearch?page=${currentPage}&per_page=${perPage}`, filteredFilters, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            setResults(response.data["results"])
+            setTotalPages(response.data["page_count"])
+            console.log(response.data);
+        }
+        catch (error) {
+            console.error('search failed', error);
+        }
+    }
+
+    useEffect(()=>{
+        handleSubmit()
+    },[currentPage,orderBy])
+
+
+
     const generateYearOptions = (startYear, endYear) => {
         const years = [];
         for (let year = startYear; year <= endYear; year++) {
@@ -36,15 +152,56 @@ function AdvancedSearch() {
     const yearOptions = generateYearOptions(1800, new Date().getFullYear()).reverse();
     yearOptions.push({label:"Before 1800", value:0})
 
-    const [selectedStartYear, setSelectedStartYear] = useState(null);
-    const [selectedEndYear, setSelectedEndYear] = useState(null);
-
     const handleStartYearChange = (selectedOption) => {
         setSelectedStartYear(selectedOption);
     };
 
     const handleEndYearChange = (selectedOption) => {
         setSelectedEndYear(selectedOption);
+    };
+
+    const handlePageNumbersChange = (selectedOptions) => {
+        setSelectedPageNumbers(selectedOptions);
+    };
+
+    const handleMinRatingChange = (selectedOption) => {
+        setSelectedMinRating(selectedOption);
+    };
+
+    const handleMaxRatingChange = (selectedOption) => {
+        setSelectedMaxRating(selectedOption);
+    };
+
+    const handleOrderByChange = (selectedOption) => {
+        setOrderBy(selectedOption)
+    }
+
+    const handleFormatChange = (selectedOptions) => {
+        setselectedFormats(selectedOptions)
+    }
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+            window.scrollTo(0, 0);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+            window.scrollTo(0, 0);
+        }
+    };
+
+    const hasInputErrors = () => {
+        if (selectedStartYear && selectedEndYear && selectedStartYear.value > selectedEndYear.value) {
+            return true;
+        }
+        if (selectedMinRating && selectedMaxRating && selectedMinRating.value >= selectedMaxRating.value) {
+            return true;
+        }
+        return false;
     };
 
     return (
@@ -60,6 +217,8 @@ function AdvancedSearch() {
                                     className="form-control rounded-1 text-center"
                                     placeholder="Search ..."
                                     style={{ padding: '10px 20px' }}
+                                    value={input}
+                                    onChange={(e)=>(setInput(e.target.value))}
                                 />
                             </div>
                         </Col>
@@ -67,20 +226,29 @@ function AdvancedSearch() {
                     <Row className="m-2">
                         <Col lg={5} md={5} sm={12} xs={12} className='ms-auto'>
                             <h4>Author:</h4>
-                            <MultiSelectComponent which={"author"} />
+                            <MultiSelectComponent which={"author"} setSelected={setSelectedAuthors} selected={selectedAuthors}/>
                         </Col>
                         <Col lg={5} md={5} sm={12} xs={12} className='me-auto'>
                             <h4>Genre:</h4>
-                            <MultiSelectComponent which={"genre"} />
+                            <MultiSelectComponent which={"genre"} setSelected={setSelectedGenres} selected={selectedGenres}/>
                         </Col>
                     </Row >
                     <Row className="m-2">
                         <Col lg={5} md={5} sm={12} xs={12} className='ms-auto'>
                             <h4>Format:</h4>
-                            <MultiSelectComponent />
+                            <Select
+                                isMulti
+                                name="format"
+                                options={formats}
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                styles={customStyles}
+                                menuPortalTarget={document.body}
+                                onChange={handleFormatChange}
+                            />
                         </Col>
                         <Col lg={5} md={5} sm={12} xs={12} className='me-auto'>
-                            <h4>Page number:</h4>
+                            <h4>Page Count:</h4>
                             <Select
                                 isMulti
                                 name="page_numbers"
@@ -89,6 +257,7 @@ function AdvancedSearch() {
                                 classNamePrefix="select"
                                 styles={customStyles}
                                 menuPortalTarget={document.body}
+                                onChange={handlePageNumbersChange}
                             />
                         </Col>
                     </Row >
@@ -104,6 +273,7 @@ function AdvancedSearch() {
                                         classNamePrefix="select"
                                         styles={customStyles}
                                         menuPortalTarget={document.body}
+                                        onChange={handleMinRatingChange}
                                     />
                                 </Col>
                                 <Col lg={6} md={6} sm={12} xs={12} className='mx-auto my-2'>
@@ -114,6 +284,7 @@ function AdvancedSearch() {
                                         classNamePrefix="select"
                                         styles={customStyles}
                                         menuPortalTarget={document.body}
+                                        onChange={handleMaxRatingChange}
                                     />
                                 </Col>
                             </Row>
@@ -151,98 +322,45 @@ function AdvancedSearch() {
                         </Col>
                     </Row>
                     <Row>
-                        <Col lg={3} className='mx-auto'><Button style={{ width: "100%" }}>Search</Button></Col>
+                        <Col lg={3} className='mx-auto'><Button onClick={handleSubmit} style={{ width: "100%" }} disabled={hasInputErrors()}>Search</Button></Col>
                     </Row>
                 </CardBody>
             </Card>
             <Col lg={4} md={6} sm={10} xs={10} className='ms-auto'>
-                <MultiSelectComponent />
+            <Select
+                name="order_by"
+                options={order_options}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                styles={customStyles}
+                menuPortalTarget={document.body}
+                onChange={handleOrderByChange}
+            />
             </Col>
             <Col>
-                <TableRow book={{
-                    "authors": [
-                        "J.K. Rowling"
-                    ],
-                    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1546910265i/2.jpg",
-                    "description": "Harry Potter is about to start his fifth year at Hogwarts School of Witchcraft and Wizardry. Unlike most schoolboys, Harry never enjoys his summer holidays, but this summer is even worse than usual. The Dursleys, of course, are making his life a misery, but even his best friends, Ron and Hermione, seem to be neglecting him.Harry has had enough. He is beginning to think he must do something, anything, to change his situation, when the summer holidays come to an end in a very dramatic fashion. What Harry is about to discover in his new year at Hogwarts will turn his world upside down...",
-                    "format": "Paperback",
-                    "genres": [
-                        "Adventure",
-                        "Audiobook",
-                        "Childrens",
-                        "Fiction",
-                        "Magic",
-                        "Middle Grade",
-                        "Young Adult"
-                    ],
-                    "goodreads_rating": 4.5,
-                    "page_numbers": 912,
-                    "pub_date": "Sat, 21 Jun 2003 00:00:00 GMT",
-                    "title": "Harry Potter and the Order of the Phoenix"
-                }} />
-                <TableRow book={{
-                    "authors": [
-                        "J.K. Rowling"
-                    ],
-                    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1546910265i/2.jpg",
-                    "description": "Harry Potter is about to start his fifth year at Hogwarts School of Witchcraft and Wizardry. Unlike most schoolboys, Harry never enjoys his summer holidays, but this summer is even worse than usual. The Dursleys, of course, are making his life a misery, but even his best friends, Ron and Hermione, seem to be neglecting him.Harry has had enough. He is beginning to think he must do something, anything, to change his situation, when the summer holidays come to an end in a very dramatic fashion. What Harry is about to discover in his new year at Hogwarts will turn his world upside down...",
-                    "format": "Paperback",
-                    "genres": [
-                        "Adventure",
-                        "Audiobook",
-                        "Childrens",
-                        "Fiction",
-                        "Magic",
-                        "Middle Grade",
-                        "Young Adult"
-                    ],
-                    "goodreads_rating": 4.5,
-                    "page_numbers": 912,
-                    "pub_date": "Sat, 21 Jun 2003 00:00:00 GMT",
-                    "title": "Harry Potter and the Order of the Phoenix"
-                }} />
-                <TableRow book={{
-                    "authors": [
-                        "J.K. Rowling"
-                    ],
-                    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1546910265i/2.jpg",
-                    "description": "Harry Potter is about to start his fifth year at Hogwarts School of Witchcraft and Wizardry. Unlike most schoolboys, Harry never enjoys his summer holidays, but this summer is even worse than usual. The Dursleys, of course, are making his life a misery, but even his best friends, Ron and Hermione, seem to be neglecting him.Harry has had enough. He is beginning to think he must do something, anything, to change his situation, when the summer holidays come to an end in a very dramatic fashion. What Harry is about to discover in his new year at Hogwarts will turn his world upside down...",
-                    "format": "Paperback",
-                    "genres": [
-                        "Adventure",
-                        "Audiobook",
-                        "Childrens",
-                        "Fiction",
-                        "Magic",
-                        "Middle Grade",
-                        "Young Adult"
-                    ],
-                    "goodreads_rating": 4.5,
-                    "page_numbers": 912,
-                    "pub_date": "Sat, 21 Jun 2003 00:00:00 GMT",
-                    "title": "Harry Potter and the Order of the Phoenix"
-                }} />
-                <TableRow book={{
-                    "authors": [
-                        "J.K. Rowling"
-                    ],
-                    "cover": "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1546910265i/2.jpg",
-                    "description": "Harry Potter is about to start his fifth year at Hogwarts School of Witchcraft and Wizardry. Unlike most schoolboys, Harry never enjoys his summer holidays, but this summer is even worse than usual. The Dursleys, of course, are making his life a misery, but even his best friends, Ron and Hermione, seem to be neglecting him.Harry has had enough. He is beginning to think he must do something, anything, to change his situation, when the summer holidays come to an end in a very dramatic fashion. What Harry is about to discover in his new year at Hogwarts will turn his world upside down...",
-                    "format": "Paperback",
-                    "genres": [
-                        "Adventure",
-                        "Audiobook",
-                        "Childrens",
-                        "Fiction",
-                        "Magic",
-                        "Middle Grade",
-                        "Young Adult"
-                    ],
-                    "goodreads_rating": 4.5,
-                    "page_numbers": 912,
-                    "pub_date": "Sat, 21 Jun 2003 00:00:00 GMT",
-                    "title": "Harry Potter and the Order of the Phoenix"
-                }} />
+            
+            {results.length === 0? (<h4 className='text-center'>No Comments yet</h4>) : (<>{results.map((result)=>{return <TableRow book={result} />})}
+            <Row className="mt-4">
+                <Col className="text-center">
+                    <Button
+                        color="primary"
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </Button>
+                    <span className="mx-2">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                        color="primary"
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </Button>
+                </Col>
+            </Row></>)}
             </Col>
         </Container>
     );

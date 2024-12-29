@@ -24,7 +24,7 @@ function TableRow(props) {
                     <CardHeader ><Link to={`/book/${book.boookid}`}>{book.title}</Link></CardHeader>
                     <CardBody className='p-1'>
                         <CardText className='m-1'>{book.authors[0]}</CardText>
-                        <CardText className='m-1'>Format : {book.format} | Year : {book.year} | {book.pages} pages</CardText>
+                        <CardText className='m-1'>Format : {book.format} | Year : {book.pub_date} | {book.page_numbers} pages</CardText>
                         <CardText className='m-1'>{book.goodreads_rating} / 5.00</CardText>
                     </CardBody>
                 </Col>
