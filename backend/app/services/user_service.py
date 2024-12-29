@@ -85,7 +85,7 @@ class UserService:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         prompt = """INSERT INTO users (username, name, middle_name, last_name, email, birthdate, gender, avatar, password)
-	    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);
+	    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING userid;
         """
         try:
             cursor.execute(
@@ -103,6 +103,8 @@ class UserService:
                 ),
             )
             conn.commit()
+            id = cursor.fetchone()["userid"]
+            return id
         except Exception as e:
             print(f"Error: {e}")
             conn.rollback()
