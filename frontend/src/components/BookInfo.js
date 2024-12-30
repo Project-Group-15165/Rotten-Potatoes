@@ -31,17 +31,17 @@ const ResponsiveCard = (props) => {
     const defaultImage = require("../assets/images/book.png");
     useScrollToTop();
 
-    useEffect(() => {
-        const fetchbook = async (bookid) => {
-            try {
-                const response = await publicApi.get(`/book/bookid/${bookid}`);
-                setBook(response.data);
-                setFullDescription(response.data.description);
-            } catch (error) {
-                console.error('Failed to fetch book', error);
-            }
-        };
+    const fetchbook = async (bookid) => {
+        try {
+            const response = await publicApi.get(`/book/bookid/${bookid}`);
+            setBook(response.data);
+            setFullDescription(response.data.description);
+        } catch (error) {
+            console.error('Failed to fetch book', error);
+        }
+    };
 
+    useEffect(() => {
         fetchbook(bookid);
     }, [bookid]);
 
@@ -156,7 +156,7 @@ const ResponsiveCard = (props) => {
                     <Card className="bookcard">
                         <CardHeader className="book-header">
                             <h3 className='book-title text-center'>{book.title} &nbsp;
-                                {user && (<a href="#" onClick={showlists} style={{ cursor: 'pointer' }}>
+                                {user && (<a onClick={showlists} style={{ cursor: 'pointer' }}>
                                     <FontAwesomeIcon icon={faClipboardList} />
                                 </a>)}
                             </h3>
@@ -236,7 +236,7 @@ const ResponsiveCard = (props) => {
                             </p>
                         </CardFooter>
                     </Card>
-                    <ProgressForm bookid={bookid}/>
+                    <ProgressForm bookid={bookid} refreshBook={fetchbook}/>
                 </Col>
             </Row>
             <div className="section-header align-center">

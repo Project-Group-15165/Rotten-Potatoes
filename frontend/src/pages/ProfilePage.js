@@ -8,6 +8,7 @@ import ProfileCard from '../components/ProfileCard';
 import ReviewList from '../components/ReviewList';
 import useScrollToTop from "../services/useScrollToTop";
 import List from '../components/List';
+import { useNavigate } from 'react-router-dom';
 
 function ProfilePage() {
     const { user } = useContext(AuthContext);
@@ -17,6 +18,7 @@ function ProfilePage() {
     const [newListName, setNewListName] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const navigate = useNavigate()
 
     const perPage = 5; // Number of reviews per page
     useScrollToTop();
@@ -114,6 +116,25 @@ function ProfilePage() {
 
     return (
         <>
+        {user.username === "admin" && (<>
+        <Row>
+            <Col className='mx-auto d-flex justify-content-center'>
+            <Button  color="primary" onClick={(e) => {e.preventDefault();navigate("/book/add")} } >
+                Manage Books
+            </Button>
+            </Col>
+            <Col className='mx-auto d-flex justify-content-center'>
+            <Button  color="primary" onClick={(e) => {e.preventDefault();navigate("/author/add")} } >
+                Manage Authors
+            </Button>
+            </Col>
+            <Col className='mx-auto d-flex justify-content-center'>
+            <Button  color="primary" onClick={(e) => {e.preventDefault();navigate("/genre/add")} } >
+                Manage Genres
+            </Button>
+            </Col>
+            </Row>
+        </>)}
             <ProfileCard user={user} />
             <Container>
                 <Row>

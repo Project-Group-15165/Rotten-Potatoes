@@ -9,11 +9,11 @@ const Footer = () => {
     <footer id="footer">
       <Container>
         <Row>
-          <Col md="4">
+          <Col md="6" lg={6}>
             <div className="footer-item">
               <div className="company-brand">
                 <img src={potato_logo} alt="logo" className="footer-logo" />
-                <p>Welcome to our project! We are dedicated to creating a comprehensive platform for book enthusiasts. Our mission is to provide a seamless experience for discovering, reading, and sharing books. Whether you're looking for the latest bestsellers, classic literature, or hidden gems, our platform has something for everyone. Join our community and embark on a literary journey with us!</p>
+                <p>Welcome to Rotten Potatoes, where bookworms unite to devour literature like a hungry caterpillar at an all-you-can-eat buffet! Whether you're here to find your next page-turner, share your unsolicited opinions, or just procrastinate on that novel you're supposed to be writing, we've got you covered. Join our quirky community and let's turn those book spines into a spine-tingling adventure! </p>
               </div>
             </div>
           </Col>

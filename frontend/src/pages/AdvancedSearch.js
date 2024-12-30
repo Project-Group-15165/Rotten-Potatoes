@@ -274,6 +274,7 @@ function AdvancedSearch() {
                                         styles={customStyles}
                                         menuPortalTarget={document.body}
                                         onChange={handleMinRatingChange}
+                                        placeholder="Min"
                                     />
                                 </Col>
                                 <Col lg={6} md={6} sm={12} xs={12} className='mx-auto my-2'>
@@ -285,6 +286,7 @@ function AdvancedSearch() {
                                         styles={customStyles}
                                         menuPortalTarget={document.body}
                                         onChange={handleMaxRatingChange}
+                                        placeholder="Max"
                                     />
                                 </Col>
                             </Row>
