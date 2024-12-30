@@ -4,6 +4,7 @@ import { Container, Row, Col, Button } from 'reactstrap';
 import { useEffect, useState } from 'react';
 import { publicApi } from '../services/api';
 import ReviewList from '../components/ReviewList';
+import useScrollToTop from '../services/useScrollToTop'
 
 function UserPage() {
   const { username } = useParams(); 
@@ -12,6 +13,7 @@ function UserPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const perPage = 5; // Number of reviews per page
+  useScrollToTop()
 
   useEffect(() => {
     const fetchUser = async (username) => {

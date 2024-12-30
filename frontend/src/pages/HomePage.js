@@ -7,8 +7,10 @@ import {
 import BookCard from '../components/cards/Bookcard'
 import AuthorCard from '../components/cards/Authorcard'
 import GenreCard from '../components/cards/genrecard'
+import useScrollToTop from '../services/useScrollToTop'
 
 function HomePage() {
+    useScrollToTop()
     return (
     <>
         <section id="popular-books" class="bookshelf no-padding-bottom no-margin no-padding">

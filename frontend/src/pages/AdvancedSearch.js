@@ -7,6 +7,7 @@ import {  publicApi } from '../services/api';
 import useScrollToTop from '../services/useScrollToTop';
 
 function AdvancedSearch() {
+    useScrollToTop()
     const page_options = [
         { label: "Less than 150", value: 1 },
         { label: "Between 150 and 300", value: 2 },

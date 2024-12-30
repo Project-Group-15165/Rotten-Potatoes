@@ -4,9 +4,11 @@ import { Col, Container } from 'reactstrap';
 import { useState, useEffect } from 'react';
 import { publicApi } from '../services/api';
 import ReviewList from '../components/ReviewList';
+import useScrollToTop from '../services/useScrollToTop'
 
 
 function CommunityPage() {
+  useScrollToTop()
     const [reviews, setReviews] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);

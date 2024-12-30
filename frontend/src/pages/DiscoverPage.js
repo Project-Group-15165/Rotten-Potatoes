@@ -7,6 +7,7 @@ import AuthorCard from "../components/cards/Authorcard";
 import GenreCard from "../components/cards/genrecard";
 import useScrollToTop from "../services/useScrollToTop";
 
+
 const DiscoverPage = () => {
     const { page } = useParams();
     const [input, setInput] = useState("");

@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from '../context/AuthContext';
+import useScrollToTop from '../services/useScrollToTop'
 
 // reactstrap components
 import {
@@ -24,6 +25,7 @@ import { faUser, faUserCircle, faUserAlt, faEnvelope, faCalendarAlt, faVenusMars
 import { update } from "../services/authService";
 
 function UpdateUser() {
+  useScrollToTop()
   const avatars_list = [1, 2, 3, 4, 5, 6];
 
   const navigate = useNavigate()

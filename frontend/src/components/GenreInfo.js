@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Container, Button } from 'reactstrap';
 import { publicApi } from '../services/api';
 import BookCard from './cards/Bookcard';
+import useScrollToTop from '../services/useScrollToTop'
 
 const GenreInfo = (props) => {
     const { genreid, name } = props;
@@ -10,6 +11,7 @@ const GenreInfo = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const perPage = 12; // Number of cards per page
+    useScrollToTop()
     //const navigate = useNavigate();
 
     useEffect(() => {

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Button, Container, Row, Col, Alert } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
 import { authorizedApi } from '../services/api';
+import useScrollToTop from '../services/useScrollToTop'
 
 function DeleteUser() {
+    useScrollToTop()
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
 
