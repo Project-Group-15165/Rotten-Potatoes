@@ -96,11 +96,7 @@ const AuthorForm = () => {
 
       const response = await authorizedApi[method](endpoint, author);
       if (response.status === 200 || response.status === 201) {
-        const id = await authorizedApi['get']("author/getallauthors", {
-            params: { input_word: author["name"],per_page:1 },
-          });
-
-        navigate(`/author/${selectedAuthor ? selectedAuthor.authorid :id.data[0][0]["authorid"]}` );
+        navigate(`/author/${selectedAuthor ? selectedAuthor.authorid :response.data["authorid"]}` );
       }
     } catch (error) {
       console.error('Failed to save author:', error);
@@ -170,7 +166,7 @@ const AuthorForm = () => {
                   <Input
                     name="image"
                     id="image"
-                    placeholder="Enter image URL..."
+                    placeholder="Enter image URL...(leave it empty if not available)"
                     type="text"
                     value={author.image}
                     onChange={handleChange}

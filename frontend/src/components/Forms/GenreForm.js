@@ -81,11 +81,7 @@ const GenreForm = () => {
 
       const response = await authorizedApi[method](endpoint, genre);
       if (response.status === 200 || response.status === 201) {
-        const id = await authorizedApi['get']("genre/getallgenres", {
-          params: { input_word: genre["name"], per_page: 1 },
-        });
-        console.log(id.data)
-        navigate(`/genre/${selectedGenre ? selectedGenre.genreid : id.data[0][0]["genreid"]}/ ${id.data[0][0]["name"]}`);
+        navigate(`/genre/${selectedGenre ? selectedGenre.genreid : response.data["genreid"]}/ ${selectedGenre? selectedGenre.name :response.data["name"]}`);
       }
     } catch (error) {
       console.error('Failed to save genre:', error);
