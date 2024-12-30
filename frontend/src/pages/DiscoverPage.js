@@ -16,8 +16,7 @@ const DiscoverPage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const perPage = 12; // Number of cards per page
     const navigate = useNavigate();
-    useScrollToTop();
-
+    window.scrollTo(0, 0);
     useEffect(() => {
         let request = "";
         if (page === "books") {
@@ -36,6 +35,7 @@ const DiscoverPage = () => {
                 const response = await publicApi.get(request, {
                     params: { page: currentPage, per_page: perPage, input_word: input },
                 });
+                console.log({currentPage, perPage, input})
                 console.log(response.data)
                 setIds(response.data[0] || []); // Ensure response data is an array
                 setTotalPages(response.data[1] || 1);

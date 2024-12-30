@@ -21,7 +21,7 @@ function TableRow(props) {
                     />
                 </Col>
                 <Col className='p-0'>
-                    <CardHeader ><Link to={`/book/${book.boookid}`}>{book.title}</Link></CardHeader>
+                    <CardHeader ><Link to={`/book/${book.bookid}`}>{book.title}</Link></CardHeader>
                     <CardBody className='p-1'>
                         <CardText className='m-1'>{book.authors[0]}</CardText>
                         <CardText className='m-1'>Format : {book.format} | Year : {book.pub_date} | {book.page_numbers} pages</CardText>

@@ -11,7 +11,7 @@ const GenreInfo = (props) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const perPage = 12; // Number of cards per page
-    useScrollToTop()
+    window.scrollTo(0, 0);
     //const navigate = useNavigate();
 
     useEffect(() => {

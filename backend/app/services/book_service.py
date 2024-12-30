@@ -4,6 +4,7 @@ from app.utils.db import get_db_connection
 from app.models import Book
 from math import ceil
 
+
 class BookService:
     @staticmethod
     def add_book(book: Book):  # we need to add genres tooo!!!!
@@ -165,6 +166,7 @@ class BookService:
                     cur.execute(
                         """SELECT bookid FROM books 
                         WHERE LOWER(title) LIKE %s
+                        ORDER BY bookid
                         LIMIT %s OFFSET %s;
                         """,
                         (("%" + input_word + "%"), per_page, offset),
@@ -200,7 +202,7 @@ class BookService:
                 finally:
                     cur.close()
                     conn.close()
-                    
+
     @staticmethod
     def getallbooksnameid(page_number, per_page, input_word):
         offset = (page_number - 1) * per_page
@@ -239,7 +241,7 @@ class BookService:
                 finally:
                     cur.close()
                     conn.close()
-                    
+
     @staticmethod
     def BookinfoForm(bookid: int):
         conn = get_db_connection()
@@ -259,8 +261,7 @@ class BookService:
                     cur.close()
                     conn.close()
 
-    
-############ BookGenre Service ####################
+    ############ BookGenre Service ####################
     @staticmethod
     def add_bookGenre(genres, bookid):
         conn = get_db_connection()
@@ -273,18 +274,18 @@ class BookService:
                         cur.execute(
                             query,
                             (
-                            bookid,
-                            genre["value"],
+                                bookid,
+                                genre["value"],
                             ),
                         )
                     except Exception as e:
                         conn.rollback()
                         raise e
-                conn.commit()  
+                conn.commit()
             cur.close()
             conn.close()
-        
-############ BookAuthor Service ####################
+
+    ############ BookAuthor Service ####################
     @staticmethod
     def add_bookAuthor(authors, bookid):
         conn = get_db_connection()
