@@ -36,7 +36,7 @@ class AuthorService:
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         prompt = """
         INSERT INTO authors (name, wiki_link, image, description)
-        VALUES (%s,%s,%s,%s);
+        VALUES (%s,%s,%s,%s) RETURNING authorid;
         """
 
         try:
@@ -49,7 +49,9 @@ class AuthorService:
                     author["description"],
                 ),
             )
+            authorid = cursor.fetchone()["authorid"]
             conn.commit()
+            return authorid
         except Exception as e:
             print(f"Error: {e}")
             conn.rollback()

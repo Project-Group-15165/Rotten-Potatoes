@@ -33,13 +33,17 @@ class GenreService:
     def add_genre(genre: Genre):
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        prompt = """INSERT INTO genres (name) VALUES (%s);"""
+        prompt = """INSERT INTO genres (name) VALUES (%s)RETURNING genreid, name"""
         try:
             cursor.execute(
                 prompt,
                 (genre.name,),
             )
+            result = cursor.fetchone()
+            genreid = result["genreid"]
+            name = result["name"]
             conn.commit()
+            return [genreid,name]
         except Exception as e:
             conn.rollback()
             raise e

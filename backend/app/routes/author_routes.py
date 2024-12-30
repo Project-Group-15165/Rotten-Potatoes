@@ -24,11 +24,11 @@ def get_author(authorid):
 def add_author(identity):
     data = request.get_json()
     try:
-        AuthorService.add_author(data)
+        authorid = AuthorService.add_author(data)
     except Exception as e:
         return jsonify({"message": "error can't add author " + str(e)}), 500
 
-    return jsonify({"message": "Author added successfully"}), 201
+    return jsonify({"message": "Author added successfully", "authorid" : authorid}), 201
 
 
 @bp.route("/update/<authorid>", methods=["PUT"])
