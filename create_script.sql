@@ -75,7 +75,9 @@ CREATE TABLE Books (
     format TEXT,                       
     page_numbers INTEGER,              
     pub_date DATE,                     
-    goodreads_rating REAL            
+    goodreads_rating REAL,
+    potato_meter REAL,
+    reviews_number INTEGER
 );
 
 
