@@ -35,7 +35,6 @@ const DiscoverPage = () => {
                 const response = await publicApi.get(request, {
                     params: { page: currentPage, per_page: perPage, input_word: input },
                 });
-                console.log({currentPage, perPage, input})
                 console.log(response.data)
                 setIds(response.data[0] || []); // Ensure response data is an array
                 setTotalPages(response.data[1] || 1);

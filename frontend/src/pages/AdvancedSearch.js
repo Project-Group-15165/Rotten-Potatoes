@@ -132,7 +132,13 @@ function AdvancedSearch() {
             console.log(response.data);
         }
         catch (error) {
-            console.error('search failed', error);
+            if (error.response && error.response.status === 404) {
+                setResults([])
+                setTotalPages(0)
+                console.error('Resource not found', error);
+            } else {
+                console.error('Search failed', error);
+            }
         }
     }
 
@@ -342,7 +348,7 @@ function AdvancedSearch() {
             </Col>
             <Col>
             
-            {results.length === 0? (<h4 className='text-center'>No Comments yet</h4>) : (<>{results.map((result)=>{return <TableRow book={result} />})}
+            {results.length === 0? (<h4 className='text-center'>No books match the specified filters</h4>) : (<>{results.map((result)=>{return <TableRow book={result} />})}
             <Row className="mt-4">
                 <Col className="text-center">
                     <Button
