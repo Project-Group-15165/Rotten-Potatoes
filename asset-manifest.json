@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Rotten-Potatoes/static/css/main.9f115a25.css",
-    "main.js": "/Rotten-Potatoes/static/js/main.45d01448.js",
+    "main.js": "/Rotten-Potatoes/static/js/main.e50b5337.js",
     "static/media/5.png": "/Rotten-Potatoes/static/media/5.7054953d75847720fb69.png",
     "static/media/4.png": "/Rotten-Potatoes/static/media/4.732a3a3659bf9c5b8adf.png",
     "static/media/1.png": "/Rotten-Potatoes/static/media/1.7dc5aca64f5df2f5cdc2.png",
@@ -13,10 +13,10 @@
     "static/media/author.png": "/Rotten-Potatoes/static/media/author.9df237428728a67a0f35.png",
     "index.html": "/Rotten-Potatoes/index.html",
     "main.9f115a25.css.map": "/Rotten-Potatoes/static/css/main.9f115a25.css.map",
-    "main.45d01448.js.map": "/Rotten-Potatoes/static/js/main.45d01448.js.map"
+    "main.e50b5337.js.map": "/Rotten-Potatoes/static/js/main.e50b5337.js.map"
   },
   "entrypoints": [
     "static/css/main.9f115a25.css",
-    "static/js/main.45d01448.js"
+    "static/js/main.e50b5337.js"
   ]
 }
