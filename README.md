@@ -137,6 +137,16 @@ Before submitting your pull request, please:
 - Follow the existing code style
 - Add unit tests for any new functionality
 
+## Team Members
+- [Abdelhake Hamdoaui](https://github.com/HamdaouiAbdelhake) 
+- [Racha Badreddine](https://github.com/racha-badreddine) 
+- [Melike Besparmak](https://github.com/metahead00)
+- [Madina Alzhanova](https://github.com/madinansar) 
+
+## Special Thanks
+We would like to extend our heartfelt gratitude to:
+- Our instructors at ITU for their guidance and support
+
 ## License
 This project is licensed under the MIT License.
 
