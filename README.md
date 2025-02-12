@@ -2,6 +2,19 @@
 
 Welcome to Rotten Potatoes, a comprehensive platform for book enthusiasts to discover, read, and share their favorite books. This project includes both frontend and backend components to create a full-featured book review and discussion platform.
 
+## Quick Links
+- 🚀 [Live Demo](https://vercel-deploy-one-gamma.vercel.app/)
+
+## Team Members
+- [Abdelhake Hamdoaui](https://github.com/HamdaouiAbdelhake) 
+- [Racha Badreddine](https://github.com/racha-badreddine) 
+- [Melike Besparmak](https://github.com/metahead00)
+- [Madina Alzhanova](https://github.com/madinansar) 
+
+## Special Thanks
+We would like to extend our heartfelt gratitude to:
+- Our instructors at ITU for their guidance and support
+
 ## Table of Contents
 - [Project Overview](#project-overview)
 - [Features](#features)
@@ -136,16 +149,6 @@ Before submitting your pull request, please:
 - Update documentation as needed
 - Follow the existing code style
 - Add unit tests for any new functionality
-
-## Team Members
-- [Abdelhake Hamdoaui](https://github.com/HamdaouiAbdelhake) 
-- [Racha Badreddine](https://github.com/racha-badreddine) 
-- [Melike Besparmak](https://github.com/metahead00)
-- [Madina Alzhanova](https://github.com/madinansar) 
-
-## Special Thanks
-We would like to extend our heartfelt gratitude to:
-- Our instructors at ITU for their guidance and support
 
 ## License
 This project is licensed under the MIT License.
